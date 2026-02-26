@@ -78,8 +78,7 @@
     (is (= [r1] (:rejected result)))
     ;; Booking created
     (let [booking (b/get-booking *node* (:booking-id result))]
-      (is (= "Val" (:tenant-name booking)))
-      (is (= :confirmed (:status booking))))
+      (is (= "Val" (:tenant-name booking))))
     ;; Request statuses updated
     (is (= :accepted (:status (b/get-request *node* r2))))
     (is (= :rejected (:status (b/get-request *node* r1))))))
@@ -111,9 +110,12 @@
                                           :end-date (instant "2026-05-02T00:00:00Z")})
         req (b/get-request *node* req-id)
         {:keys [booking-id]} (b/resolve-slot! *node* [req] first)]
-    (b/cancel-booking! *node* booking-id "Changed plans")
-    (let [booking (b/get-booking *node* booking-id)]
-      (is (= :cancelled (:status booking)))
-      (is (= "Changed plans" (:cancellation-reason booking))))))
+    ;; Booking exists
+    (is (some? (b/get-booking *node* booking-id)))
+    (b/cancel-booking! *node* booking-id)
+    ;; Booking gone
+    (is (nil? (b/get-booking *node* booking-id)))
+    ;; But history proves it existed
+    (is (seq (b/booking-history *node* booking-id)))))
 
 

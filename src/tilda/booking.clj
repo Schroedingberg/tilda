@@ -55,28 +55,22 @@
 (defn all-bookings [node]
   (xt/q node '(from :bookings [*])))
 
-(defn active-bookings
-  "Bookings that aren't cancelled."
-  [node]
-  (xt/q node '(-> (from :bookings [*]) (where (not (= status :cancelled))))))
-
 (defn find-conflicts
-  "Find active bookings that conflict with a proposed time slot."
+  "Find bookings that conflict with a proposed time slot."
   [node requested-start requested-end & {:keys [exclude-id]}]
   (let [conflicts (xt/q node
-                        '(-> (from :bookings [xt/id tenant-name start-date end-date status])
+                        '(-> (from :bookings [xt/id tenant-name start-date end-date])
                              (where (and (<= start-date $end)
-                                         (>= end-date $start)
-                                         (not (= status :cancelled)))))
+                                         (>= end-date $start))))
                         {:args {:start requested-start :end requested-end}})]
     (if exclude-id
       (remove #(= (:xt/id %) exclude-id) conflicts)
       conflicts)))
 
-(defn cancel-booking! [node booking-id reason]
-  (when-let [booking (get-booking node booking-id)]
-    (xt/execute-tx node [[:put-docs :bookings
-                          (assoc booking :status :cancelled :cancellation-reason reason)]])))
+(defn cancel-booking!
+  "Delete a booking. Use booking-history to prove it existed."
+  [node booking-id]
+  (xt/execute-tx node [[:delete-docs :bookings booking-id]]))
 
 (defn booking-history [node booking-id]
   (xt/q node
@@ -102,8 +96,7 @@
                          :request-id (:xt/id winner)
                          :tenant-name (:tenant-name winner)
                          :start-date (:start-date winner)
-                         :end-date (:end-date winner)
-                         :status :confirmed}]
+                         :end-date (:end-date winner)}]
                        [:put-docs :requests (assoc winner :status :accepted)]]
                       (for [loser losers]
                         [:put-docs :requests (assoc loser :status :rejected)])))
