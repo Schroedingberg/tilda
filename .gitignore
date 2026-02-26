@@ -1,0 +1,27 @@
+# Clojure
+.cpcache/
+target/
+*.class
+*.jar
+
+# Editor/IDE
+.lsp/
+.calva/
+.vscode/
+.idea/
+*.iml
+
+# Linting (keep config, ignore cache)
+.clj-kondo/.cache/
+
+# REPL
+.nrepl-port
+.rebel_readline_history
+
+# OS
+.DS_Store
+Thumbs.db
+
+# XTDB data (if persisted locally)
+xtdb-data/
+.xtdb/
