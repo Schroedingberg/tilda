@@ -1,1 +1,0 @@
-["^ ","~:members",["^ ","getMinRetentionPeriodSeconds",["~#set",[["^ ","~:flags",["^2",["~:method","~:public"]]]]],"getMaxRetentionPeriodSeconds",["^2",[["^ ","^3",["^2",["^4","^5"]]]]],"getSampleIntervalMilliseconds",["^2",[["^ ","^3",["^2",["^4","^5"]]]]],"builder",["^2",[["^ ","^3",["^2",["^4","^5","~:static"]]]]]]]

@@ -1925,3 +1925,9 @@ clj꞉dev.fiddle꞉> 
 
 ; No tests found. 😱, ns: 0, vars: 0
 clj꞉dev.experiments꞉> 
+; Running tests for the following namespaces:
+;   dev.experiments
+;   dev.experiments-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.experiments꞉> 
