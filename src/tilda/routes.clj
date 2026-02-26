@@ -5,6 +5,8 @@
    [cheshire.generate :as json-gen]
    [clojure.java.io :as io]
    [reitit.ring :as ring]
+   [ring.middleware.params :refer [wrap-params]]
+   [ring.middleware.keyword-params :refer [wrap-keyword-params]]
    [ring.util.response :as resp]
    [tilda.booking :as b]
    [tilda.views :as views]
@@ -103,16 +105,16 @@
 
 (defn calendar-page [node]
   (fn [req]
-    (let [month (parse-month (get-in req [:query-params "month"]))
-          tenant (get-in req [:query-params "tenant"] "demo-user")
+    (let [month (parse-month (get-in req [:params :month]))
+          tenant (get-in req [:params :tenant] "demo-user")
           bookings (safe-query #(b/all-bookings node))
           requests (safe-query #(b/pending-requests node))]
       (html-response (cal/calendar-page month tenant bookings requests)))))
 
 (defn calendar-fragment [node]
   (fn [req]
-    (let [month (parse-month (get-in req [:query-params "month"]))
-          tenant (get-in req [:query-params "tenant"] "demo-user")
+    (let [month (parse-month (get-in req [:params :month]))
+          tenant (get-in req [:params :tenant] "demo-user")
           bookings (safe-query #(b/all-bookings node))
           requests (safe-query #(b/pending-requests node))]
       (html-response (cal/calendar-fragment month tenant bookings requests)))))
@@ -223,8 +225,10 @@
        :body (slurp resource)})))
 
 (defn handler [node]
-  (ring/ring-handler
-   (router node)
-   (ring/routes
-    serve-static
-    (ring/create-default-handler))))
+  (-> (ring/ring-handler
+       (router node)
+       (ring/routes
+        serve-static
+        (ring/create-default-handler)))
+      wrap-keyword-params
+      wrap-params))
