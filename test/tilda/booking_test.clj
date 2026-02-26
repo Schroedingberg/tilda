@@ -1,6 +1,6 @@
 (ns tilda.booking-test
   (:require
-   [clojure.test :refer [deftest is testing use-fixtures]]
+   [clojure.test :refer [deftest is use-fixtures]]
    [tilda.booking :as b]
    [xtdb.node :as xtn])
   (:import [java.time Instant]))
