@@ -39,15 +39,15 @@
 (defn seed-data!
   "Add some sample bookings for experimentation."
   []
-  (booking/create-booking! @node
+  (booking/create-request! @node
                            {:tenant-name "Flo"
                             :start-date (instant "2026-03-01T00:00:00Z")
                             :end-date (instant "2026-03-03T00:00:00Z")})
-  (booking/create-booking! @node
+  (booking/create-request! @node
                            {:tenant-name "Val"
                             :start-date (instant "2026-03-05T00:00:00Z")
                             :end-date (instant "2026-03-07T00:00:00Z")})
-  (booking/create-booking! @node
+  (booking/create-request! @node
                            {:tenant-name "Aaron"
                             :start-date (instant "2026-03-10T00:00:00Z")
                             :end-date (instant "2026-03-12T00:00:00Z")})
@@ -64,35 +64,52 @@
 
   ;; Basic queries
   (booking/all-bookings @node)
-  (booking/pending-bookings @node)
 
-  ;; Try booking a slot
-  (booking/try-book! @node
-                     {:tenant-name "Chris"
-                      :start-date (instant "2026-03-15T00:00:00Z")
-                      :end-date (instant "2026-03-16T00:00:00Z")})
+  (booking/pending-requests @node)
+  ;;=> [{:priority 0,
+  ;;     :end-date #xt/zoned-date-time "2026-03-07T00:00Z[UTC]",
+  ;;     :tenant-name "Val",
+  ;;     :status :pending,
+  ;;     :requested-at #xt/zoned-date-time "2026-02-26T12:52:43.644716Z[UTC]",
+  ;;     :xt/id #uuid "199f85a0-6faf-4ec7-a3b4-16aacd78fd20",
+  ;;     :start-date #xt/zoned-date-time "2026-03-05T00:00Z[UTC]"}
+  ;;    {:priority 0,
+  ;;     :end-date #xt/zoned-date-time "2026-03-07T00:00Z[UTC]",
+  ;;     :tenant-name "Val",
+  ;;     :status :pending,
+  ;;     :requested-at #xt/zoned-date-time "2026-02-26T12:52:29.391619Z[UTC]",
+  ;;     :xt/id #uuid "5406bf25-4608-4384-aed8-c6c4a80a5f5e",
+  ;;     :start-date #xt/zoned-date-time "2026-03-05T00:00Z[UTC]"}
+  ;;    {:priority 0,
+  ;;     :end-date #xt/zoned-date-time "2026-03-03T00:00Z[UTC]",
+  ;;     :tenant-name "Flo",
+  ;;     :status :pending,
+  ;;     :requested-at #xt/zoned-date-time "2026-02-26T12:52:29.378286Z[UTC]",
+  ;;     :xt/id #uuid "67a485e8-b580-4f69-bdde-1dac9be9cc16",
+  ;;     :start-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]"}
+  ;;    {:priority 0,
+  ;;     :end-date #xt/zoned-date-time "2026-03-12T00:00Z[UTC]",
+  ;;     :tenant-name "Aaron",
+  ;;     :status :pending,
+  ;;     :requested-at #xt/zoned-date-time "2026-02-26T12:52:43.650004Z[UTC]",
+  ;;     :xt/id #uuid "9284b024-5148-486c-9e0a-8a7e91393d6c",
+  ;;     :start-date #xt/zoned-date-time "2026-03-10T00:00Z[UTC]"}
+  ;;    {:priority 0,
+  ;;     :end-date #xt/zoned-date-time "2026-03-12T00:00Z[UTC]",
+  ;;     :tenant-name "Aaron",
+  ;;     :status :pending,
+  ;;     :requested-at #xt/zoned-date-time "2026-02-26T12:52:29.398422Z[UTC]",
+  ;;     :xt/id #uuid "b2b39b60-4e18-41c0-86f7-ef5fe99911d6",
+  ;;     :start-date #xt/zoned-date-time "2026-03-10T00:00Z[UTC]"}
+  ;;    {:priority 0,
+  ;;     :end-date #xt/zoned-date-time "2026-03-03T00:00Z[UTC]",
+  ;;     :tenant-name "Flo",
+  ;;     :status :pending,
+  ;;     :requested-at #xt/zoned-date-time "2026-02-26T12:52:43.637336Z[UTC]",
+  ;;     :xt/id #uuid "d0f308d6-0c44-40c8-9f46-b49afcdaf057",
+  ;;     :start-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]"}]
 
-  ;; Try conflicting booking
-  (booking/try-book! @node
-                     {:tenant-name "Chris"
-                      :start-date (instant "2026-03-02T00:00:00Z")
-                      :end-date (instant "2026-03-04T00:00:00Z")})
 
-  ;; Check conflicts
-  (booking/find-conflicts @node
-                          (instant "2026-03-02T00:00:00Z")
-                          (instant "2026-03-04T00:00:00Z"))
-
-  (booking/can-book? @node
-                     (instant "2026-03-20T00:00:00Z")
-                     (instant "2026-03-21T00:00:00Z"))
-
-  ;; Approval workflow
-  (let [id (first (map :xt/id (booking/pending-bookings @node)))]
-    (booking/approve-booking! @node id "Val")
-    (booking/approve-booking! @node id "Aaron")
-    (booking/confirm-booking! @node id)
-    (booking/get-booking @node id))
 
   ;; View history
   (let [id (first (map :xt/id (booking/all-bookings @node)))]
@@ -103,15 +120,6 @@
     [{:tenant-name "Flo" :requested-at (instant "2026-01-01T09:00:00Z") :priority 5}
      {:tenant-name "Val" :requested-at (instant "2026-01-01T10:00:00Z") :priority 10}
      {:tenant-name "Aaron" :requested-at (instant "2026-01-01T08:00:00Z") :priority 3}])
-
-  (booking/decide-first-come-first-serve sample-requests)
-  ;; => Aaron (earliest)
-
-  (booking/decide-by-priority sample-requests)
-  ;; => Val (highest priority)
-
-  (booking/decide-random-lottery sample-requests)
-  ;; => random pick
 
   ;; Cleanup
   (stop!)
