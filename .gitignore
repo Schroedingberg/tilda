@@ -13,7 +13,7 @@ target/
 
 # Linting (keep config, ignore cache)
 .clj-kondo/.cache/
-
+.clj-kondo/
 # REPL
 .nrepl-port
 .rebel_readline_history
