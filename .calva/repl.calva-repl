@@ -1913,3 +1913,15 @@ clj꞉tilda.booking-test꞉> 
 clj꞉tilda.booking꞉> 
 ; No tests found. 😱, ns: 0, vars: 0
 clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.experiments
+;   dev.experiments-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.experiments꞉> 
