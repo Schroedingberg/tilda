@@ -1,0 +1,1915 @@
+; Jacking in...
+; Connecting using "deps.edn" project type.
+; Starting Jack-in: (cd /home/aaron/my_projects/tilda; clojure -Sdeps '{:deps {nrepl/nrepl {:mvn/version,"1.5.1"},cider/cider-nrepl {:mvn/version,"0.58.0"}}}' -M:dev)
+; Using host:port localhost:43555 ...
+; Hooking up nREPL sessions on port 43555...
+; Connected session: clj, port: 43555
+; Evaluating code from settings: 'calva.autoEvaluateCode.onConnect.clj'
+nil
+clj꞉user꞉> 
+"Please see https://calva.io/output/#about-stdout-in-the-repl-window
+about why stdout printed to this file is prepended with `;` to be line comments."
+clj꞉user꞉> 
+; Jack-in done.
+clj꞉user꞉> 
+; Running tests for the following namespaces:
+;   user
+;   user-test
+
+; Jacking in...
+; Connecting using "deps.edn" project type.
+; Starting Jack-in: (cd /home/aaron/my_projects/tilda; clojure -Sdeps '{:deps {nrepl/nrepl {:mvn/version,"1.5.1"},cider/cider-nrepl {:mvn/version,"0.58.0"}}}' -M:dev -m nrepl.cmdline --middleware "[cider.nrepl/cider-middleware]")
+; Using host:port localhost:36051 ...
+; Hooking up nREPL sessions on port 36051...
+; Connected session: clj, port: 36051
+; Evaluating code from settings: 'calva.autoEvaluateCode.onConnect.clj'
+nil
+clj꞉user꞉> 
+; Jack-in done.
+clj꞉user꞉> 
+; Syntax error compiling at (dev/fiddle.clj:10:11).
+; No such var: xt/start-node
+clj꞉dev.fiddle꞉> 
+; Evaluating file: fiddle.clj
+; 
+; ; clj  dev.fiddle 
+; Execution error (FileNotFoundException) at dev.fiddle/eval12430$loading (fiddle.clj:1).
+; Could not locate tick/alpha/api__init.class, tick/alpha/api.clj or tick/alpha/api.cljc on classpath.
+; Evaluation of file fiddle.clj failed: class clojure.lang.Compiler$CompilerException
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+nil
+; 
+; SLF4J(W): No SLF4J providers were found.
+; SLF4J(W): Defaulting to no-operation (NOP) logger implementation
+; SLF4J(W): See https://www.slf4j.org/codes.html#noProviders for further details.
+clj꞉dev.fiddle꞉> 
+; Syntax error compiling at (dev/fiddle.clj:10:11).
+; No such var: xt/start-node
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+nil
+clj꞉dev.fiddle꞉> 
+; Syntax error compiling at (dev/fiddle.clj:5:11).
+; No such var: xt/start-node
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   user
+;   user-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉user꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Evaluating file: fiddle.clj
+; java.lang.RuntimeException: Failed to initialize MemoryUtil. You must start Java with `--add-opens=java.base/java.nio=org.apache.arrow.memory.core,ALL-UNNAMED` (See https://arrow.apache.org/docs/java/install.html)
+; 	at org.apache.arrow.memory.util.MemoryUtil.<clinit>(MemoryUtil.java:140)
+; 	at org.apache.arrow.memory.ArrowBuf.setZero(ArrowBuf.java:1168)
+; 	at org.apache.arrow.vector.BaseFixedWidthVector.reAlloc(BaseFixedWidthVector.java:437)
+; 	at org.apache.arrow.vector.BaseFixedWidthVector.handleSafe(BaseFixedWidthVector.java:872)
+; 	at org.apache.arrow.vector.BaseFixedWidthVector.setIndexDefined(BaseFixedWidthVector.java:843)
+; 	at xtdb.vector.FixedSizeBinaryVectorWriter.writeBytes(FieldVectorWriters.kt:339)
+; 	at xtdb.vector.FixedSizeBinaryVectorWriter.writeObject0(FieldVectorWriters.kt:345)
+; 	at xtdb.vector.IVectorWriter.writeObject(IVectorWriter.kt:74)
+; 	at xtdb.information_schema$pg_user_template_page_PLUS_trie.invokeStatic(information_schema.clj:316)
+; 	at xtdb.information_schema$pg_user_template_page_PLUS_trie.invoke
+; (information_schema.clj:306)
+; 	at xtdb.information_schema$table__GT_template_rel_PLUS_tries.invokeStatic(information_schema.clj:328)
+; 	at xtdb.information_schema$table__GT_template_rel_PLUS_tries.invoke(information_schema.clj:327)
+; 	at xtdb.operator.scan$eval31121$fn__31123.invoke(scan.clj:159)
+; 	at clojure.lang.MultiFn.invoke(MultiFn.java:234)
+; 	at integrant.core$try_build_action.invokeStatic(core.cljc:419)
+; 	at integrant.core$try_build_action.invoke(core.cljc:418)
+; 	at integrant.core$build_key.invokeStatic(core.cljc:427)
+; 	at integrant.core$build_key.invoke(core.cljc:423)
+; 	at clojure.core$partial$fn__5931.invoke(core.clj:2656)
+; 	at clojure.core.protocols$fn__8275.invokeStatic(protocols.clj:167)
+; 	at clojure.core.protocols$fn__8275.invoke(protocols.clj:123)
+; 	at clojure.core.protocols$fn__8229$G__8224__8238.invoke(protocols.clj:19)
+; 	at clojure.core.protocols$seq_reduce.invokeStatic(protocols.clj:31)
+; 	at clojure.core.protocols$fn__8262.invokeStatic(protocols.clj:74)
+; 	at clojure.core.protocols$fn__8262.invoke(protocols.c
+; lj:74)
+; 	at clojure.core.protocols$fn__8203$G__8198__8216.invoke(protocols.clj:13)
+; 	at clojure.core$reduce.invokeStatic(core.clj:6965)
+; 	at clojure.core$reduce.invoke(core.clj:6947)
+; 	at integrant.core$build.invokeStatic(core.cljc:453)
+; 	at integrant.core$build.invoke(core.cljc:430)
+; 	at integrant.core$init.invokeStatic(core.cljc:675)
+; 	at integrant.core$init.invoke(core.cljc:667)
+; 	at integrant.core$init.invokeStatic(core.cljc:672)
+; 	at integrant.core$init.invoke(core.cljc:667)
+; 	at xtdb.node.impl$open_node.invokeStatic(impl.clj:282)
+; 	at xtdb.node.impl$open_node.invoke(impl.clj:279)
+; 	at clojure.lang.Var.invoke(Var.java:386)
+; 	at xtdb.api.Xtdb$Config.open(Xtdb.kt:85)
+; 	at xtdb.api.Xtdb$Companion.openNode(Xtdb.kt:109)
+; 	at xtdb.api.Xtdb.openNode(Xtdb.kt)
+; 	at xtdb.node$start_node.invokeStatic(node.clj:98)
+; 	at xtdb.node$start_node.invoke(node.clj:81)
+; 	at clojure.lang.AFn.applyToHelper(AFn.java:154)
+; 	at clojure.lang.AFn.applyTo(AFn.java:144)
+; 	at clojure.lang.Compiler$InvokeExpr.eval(Compiler.java:4178)
+; 	at clojure.lang.Compi
+; ler$DefExpr.eval(Compiler.java:464)
+; 	at clojure.lang.Compiler.eval(Compiler.java:7705)
+; 	at nrepl.middleware.interruptible_eval$evaluator$run__1435$fn__1446.invoke(interruptible_eval.clj:106)
+; 	at nrepl.middleware.interruptible_eval$evaluator$run__1435.invoke(interruptible_eval.clj:101)
+; 	at nrepl.middleware.session$session_exec$session_loop__1514.invoke(session.clj:229)
+; 	at nrepl.SessionThread.run(SessionThread.java:21)
+; Caused by: java.lang.reflect.InaccessibleObjectException: Unable to make field long java.nio.Buffer.address accessible: module java.base does not "opens java.nio" to unnamed module @5790a788
+; 	at java.base/java.lang.reflect.AccessibleObject.throwInaccessibleObjectException(AccessibleObject.java:391)
+; 	at java.base/java.lang.reflect.AccessibleObject.checkCanSetAccessible(AccessibleObject.java:367)
+; 	at java.base/java.lang.reflect.AccessibleObject.checkCanSetAccessible(AccessibleObject.java:315)
+; 	at java.base/java.lang.reflect.Field.checkCanSetAccessible(Field.java:183)
+; 	at java.base/java.lang.reflec
+; t.Field.setAccessible(Field.java:177)
+; 	at org.apache.arrow.memory.util.MemoryUtil.<clinit>(MemoryUtil.java:84)
+; 	... 50 more
+; Execution error (IllegalStateException) at org.apache.arrow.memory.BaseAllocator/close (BaseAllocator.java:504).
+; Memory was leaked by query. Memory leaked: (65536)
+; Outstanding child allocators : 
+;   Allocator(compactor) 0/0/0/9223372036854775807 (res/actual/peak/limit)
+; Allocator(ROOT) 0/65536/65536/9223372036854775807 (res/actual/peak/limit)
+; 
+clj꞉dev.fiddle꞉> 
+nil
+clj꞉dev.fiddle꞉> 
+; 
+; Execution error (IllegalStateException) at org.apache.arrow.memory.BaseAllocator/close (BaseAllocator.java:504).
+; Memory was leaked by query. Memory leaked: (65536)
+; Outstanding child allocators : 
+;   Allocator(compactor) 0/0/0/9223372036854775807 (res/actual/peak/limit)
+; Allocator(ROOT) 0/65536/65536/9223372036854775807 (res/actual/peak/limit)
+; 
+; Evaluation of file fiddle.clj failed: class clojure.lang.Compiler$CompilerException
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Execution error (IllegalStateException) at org.apache.arrow.memory.BaseAllocator/close (BaseAllocator.java:504).
+; Memory was leaked by query. Memory leaked: (65536)
+; Outstanding child allocators : 
+;   Allocator(compactor) 0/0/0/9223372036854775807 (res/actual/peak/limit)
+; Allocator(ROOT) 0/65536/65536/9223372036854775807 (res/actual/peak/limit)
+; 
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Evaluating file: fiddle.clj
+; 
+; Execution error (IllegalStateException) at org.apache.arrow.memory.BaseAllocator/close (BaseAllocator.java:504).
+; Memory was leaked by query. Memory leaked: (65536)
+; Outstanding child allocators : 
+;   Allocator(compactor) 0/0/0/9223372036854775807 (res/actual/peak/limit)
+; Allocator(ROOT) 0/65536/65536/9223372036854775807 (res/actual/peak/limit)
+; 
+; Evaluation of file fiddle.clj failed: class clojure.lang.Compiler$CompilerException
+clj꞉dev.fiddle꞉> 
+; Jacking in...
+; Starting Jack-in: (cd /home/aaron/my_projects/tilda; clojure -Sdeps '{:deps {nrepl/nrepl {:mvn/version,"1.5.1"},cider/cider-nrepl {:mvn/version,"0.58.0"}}}' -M:dev -m nrepl.cmdline --middleware "[cider.nrepl/cider-middleware]")
+; Using host:port localhost:33305 ...
+; Hooking up nREPL sessions on port 33305...
+; Connected session: clj, port: 33305
+; Evaluating code from settings: 'calva.autoEvaluateCode.onConnect.clj'
+nil
+clj꞉user꞉> 
+; Evaluating file: fiddle.clj
+; Jack-in done.
+clj꞉user꞉> 
+; 
+; ; clj  dev.fiddle 
+; SLF4J(W): No SLF4J providers were found.
+; SLF4J(W): Defaulting to no-operation (NOP) logger implementation
+; SLF4J(W): See https://www.slf4j.org/codes.html#noProviders for further details.
+; java.lang.RuntimeException: Failed to initialize MemoryUtil. You must start Java with `--add-opens=java.base/java.nio=org.apache.arrow.memory.core,ALL-UNNAMED` (See https://arrow.apache.org/docs/java/install.html)
+; 	at org.apache.arrow.memory.util.MemoryUtil.<clinit>(MemoryUtil.java:140)
+; 	at org.apache.arrow.memory.ArrowBuf.setZero(ArrowBuf.java:1168)
+; 	at org.apache.arrow.vector.BaseFixedWidthVector.reAlloc(BaseFixedWidthVector.java:437)
+; 	at org.apache.arrow.vector.BaseFixedWidthVector.handleSafe(BaseFixedWidthVector.java:872)
+; 	at org.apache.arrow.vector.BaseFixedWidthVector.setIndexDefined(BaseFixedWidthVector.java:843)
+; 	at xtdb.vector.FixedSizeBinaryVectorWriter.writeBytes(FieldVectorWriters.kt:339)
+; 	at xtdb.vector.FixedSizeBinaryVectorWriter.writeObject0(FieldVectorWriters.kt:345)
+; 	at xtdb.vector.IVectorWriter.writeObject(IV
+; ectorWriter.kt:74)
+; 	at xtdb.information_schema$pg_user_template_page_PLUS_trie.invokeStatic(information_schema.clj:316)
+; 	at xtdb.information_schema$pg_user_template_page_PLUS_trie.invoke(information_schema.clj:306)
+; 	at xtdb.information_schema$table__GT_template_rel_PLUS_tries.invokeStatic(information_schema.clj:328)
+; 	at xtdb.information_schema$table__GT_template_rel_PLUS_tries.invoke(information_schema.clj:327)
+; 	at xtdb.operator.scan$eval24593$fn__24595.invoke(scan.clj:159)
+; 	at clojure.lang.MultiFn.invoke(MultiFn.java:234)
+; 	at integrant.core$try_build_action.invokeStatic(core.cljc:419)
+; 	at integrant.core$try_build_action.invoke(core.cljc:418)
+; 	at integrant.core$build_key.invokeStatic(core.cljc:427)
+; 	at integrant.core$build_key.invoke(core.cljc:423)
+; 	at clojure.core$partial$fn__5931.invoke(core.clj:2656)
+; 	at clojure.core.protocols$fn__8275.invokeStatic(protocols.clj:167)
+; 	at clojure.core.protocols$fn__8275.invoke(protocols.clj:123)
+; 	at clojure.core.protocols$fn__8229$G__8224__8238.invoke(protocols.clj:19)
+; 	at 
+; clojure.core.protocols$seq_reduce.invokeStatic(protocols.clj:31)
+; 	at clojure.core.protocols$fn__8262.invokeStatic(protocols.clj:74)
+; 	at clojure.core.protocols$fn__8262.invoke(protocols.clj:74)
+; 	at clojure.core.protocols$fn__8203$G__8198__8216.invoke(protocols.clj:13)
+; 	at clojure.core$reduce.invokeStatic(core.clj:6965)
+; 	at clojure.core$reduce.invoke(core.clj:6947)
+; 	at integrant.core$build.invokeStatic(core.cljc:453)
+; 	at integrant.core$build.invoke(core.cljc:430)
+; 	at integrant.core$init.invokeStatic(core.cljc:675)
+; 	at integrant.core$init.invoke(core.cljc:667)
+; 	at integrant.core$init.invokeStatic(core.cljc:672)
+; 	at integrant.core$init.invoke(core.cljc:667)
+; 	at xtdb.node.impl$open_node.invokeStatic(impl.clj:282)
+; 	at xtdb.node.impl$open_node.invoke(impl.clj:279)
+; 	at clojure.lang.Var.invoke(Var.java:386)
+; 	at xtdb.api.Xtdb$Config.open(Xtdb.kt:85)
+; 	at xtdb.api.Xtdb$Companion.openNode(Xtdb.kt:109)
+; 	at xtdb.api.Xtdb.openNode(Xtdb.kt)
+; 	at xtdb.node$start_node.invokeStatic(node.clj:98)
+; 	at xtdb.node$start_node.invoke(nod
+; e.clj:81)
+; 	at xtdb.node$start_node.invokeStatic(node.clj:95)
+; 	at xtdb.node$start_node.invoke(node.clj:81)
+; 	at dev.fiddle$eval11617.invokeStatic(fiddle.clj:6)
+; 	at dev.fiddle$eval11617.invoke(fiddle.clj:6)
+; 	at clojure.lang.Compiler.eval(Compiler.java:7700)
+; 	at clojure.lang.Compiler.load(Compiler.java:8165)
+; 	at user$eval8736.invokeStatic(NO_SOURCE_FILE:1)
+; 	at user$eval8736.invoke(NO_SOURCE_FILE:1)
+; 	at clojure.lang.Compiler.eval(Compiler.java:7700)
+; 	at nrepl.middleware.interruptible_eval$evaluator$run__1435$fn__1446.invoke(interruptible_eval.clj:106)
+; 	at nrepl.middleware.interruptible_eval$evaluator$run__1435.invoke(interruptible_eval.clj:101)
+; 	at nrepl.middleware.session$session_exec$session_loop__1514.invoke(session.clj:229)
+; 	at nrepl.SessionThread.run(SessionThread.java:21)
+; Caused by: java.lang.reflect.InaccessibleObjectException: Unable to make field long java.nio.Buffer.address accessible: module java.base does not "opens java.nio" to unnamed module @d7c03db
+; 	at java.base/java.lang.reflect.AccessibleObject.t
+; hrowInaccessibleObjectException(AccessibleObject.java:391)
+; 	at java.base/java.lang.reflect.AccessibleObject.checkCanSetAccessible(AccessibleObject.java:367)
+; 	at java.base/java.lang.reflect.AccessibleObject.checkCanSetAccessible(AccessibleObject.java:315)
+; 	at java.base/java.lang.reflect.Field.checkCanSetAccessible(Field.java:183)
+; 	at java.base/java.lang.reflect.Field.setAccessible(Field.java:177)
+; 	at org.apache.arrow.memory.util.MemoryUtil.<clinit>(MemoryUtil.java:84)
+; 	... 54 more
+; Execution error (IllegalStateException) at org.apache.arrow.memory.BaseAllocator/close (BaseAllocator.java:504).
+; Memory was leaked by query. Memory leaked: (65536)
+; Outstanding child allocators : 
+;   Allocator(compactor) 0/0/0/9223372036854775807 (res/actual/peak/limit)
+; Allocator(ROOT) 0/65536/65536/9223372036854775807 (res/actual/peak/limit)
+; 
+; Evaluation of file fiddle.clj failed: class clojure.lang.Compiler$CompilerException
+clj꞉dev.fiddle꞉> 
+; Execution error (IllegalArgumentException) at xtdb.protocols/eval8826$fn$G (protocols.clj:4).
+; No implementation of method: :submit-tx of protocol: #'xtdb.protocols/PNode found for class: clojure.lang.Var$Unbound
+clj꞉dev.fiddle꞉> 
+; Execution error (IllegalArgumentException) at xtdb.protocols/eval8826$fn$G (protocols.clj:4).
+; No implementation of method: :submit-tx of protocol: #'xtdb.protocols/PNode found for class: clojure.lang.Var$Unbound
+clj꞉dev.fiddle꞉> 
+; Jacking in...
+; Connecting using "deps.edn" project type.
+; Starting Jack-in: (cd /home/aaron/my_projects/tilda; clojure -Sdeps '{:deps {nrepl/nrepl {:mvn/version,"1.5.1"},cider/cider-nrepl {:mvn/version,"0.58.0"}}}' -M:dev -m nrepl.cmdline --middleware "[cider.nrepl/cider-middleware]")
+; Using host:port localhost:33143 ...
+; Hooking up nREPL sessions on port 33143...
+; Connected session: clj, port: 33143
+; Evaluating code from settings: 'calva.autoEvaluateCode.onConnect.clj'
+nil
+clj꞉user꞉> 
+; Jack-in done.
+clj꞉user꞉> 
+; Syntax error compiling at (dev/fiddle.clj:10:3).
+; Unable to resolve symbol: node in this context
+clj꞉dev.fiddle꞉> 
+; Evaluating file: fiddle.clj
+; 
+; ; clj  dev.fiddle 
+; java.lang.RuntimeException: Failed to initialize MemoryUtil. You must start Java with `--add-opens=java.base/java.nio=org.apache.arrow.memory.core,ALL-UNNAMED` (See https://arrow.apache.org/docs/java/install.html)
+; 	at org.apache.arrow.memory.util.MemoryUtil.<clinit>(MemoryUtil.java:140)
+; 	at org.apache.arrow.memory.ArrowBuf.setZero(ArrowBuf.java:1168)
+; 	at org.apache.arrow.vector.BaseFixedWidthVector.reAlloc(BaseFixedWidthVector.java:437)
+; 	at org.apache.arrow.vector.BaseFixedWidthVector.handleSafe(BaseFixedWidthVector.java:872)
+; 	at org.apache.arrow.vector.BaseFixedWidthVector.setIndexDefined(BaseFixedWidthVector.java:843)
+; 	at xtdb.vector.FixedSizeBinaryVectorWriter.writeBytes(FieldVectorWriters.kt:339)
+; 	at xtdb.vector.FixedSizeBinaryVectorWriter.writeObject0(FieldVectorWriters.kt:345)
+; 	at xtdb.vector.IVectorWriter.writeObject(IVectorWriter.kt:74)
+; 	at xtdb.information_schema$pg_user_template_page_PLUS_trie.invokeStatic(information_schema.clj:316)
+; 	at xtdb.information_schema$pg_user_template_page_PLUS_trie.invoke
+; (information_schema.clj:306)
+; 	at xtdb.information_schema$table__GT_template_rel_PLUS_tries.invokeStatic(information_schema.clj:328)
+; 	at xtdb.information_schema$table__GT_template_rel_PLUS_tries.invoke(information_schema.clj:327)
+; 	at xtdb.operator.scan$eval25847$fn__25849.invoke(scan.clj:159)
+; 	at clojure.lang.MultiFn.invoke(MultiFn.java:234)
+; 	at integrant.core$try_build_action.invokeStatic(core.cljc:419)
+; 	at integrant.core$try_build_action.invoke(core.cljc:418)
+; 	at integrant.core$build_key.invokeStatic(core.cljc:427)
+; 	at integrant.core$build_key.invoke(core.cljc:423)
+; 	at clojure.core$partial$fn__5931.invoke(core.clj:2656)
+; 	at clojure.core.protocols$fn__8275.invokeStatic(protocols.clj:167)
+; 	at clojure.core.protocols$fn__8275.invoke(protocols.clj:123)
+; 	at clojure.core.protocols$fn__8229$G__8224__8238.invoke(protocols.clj:19)
+; 	at clojure.core.protocols$seq_reduce.invokeStatic(protocols.clj:31)
+; 	at clojure.core.protocols$fn__8262.invokeStatic(protocols.clj:74)
+; 	at clojure.core.protocols$fn__8262.invoke(protocols.c
+; lj:74)
+; 	at clojure.core.protocols$fn__8203$G__8198__8216.invoke(protocols.clj:13)
+; 	at clojure.core$reduce.invokeStatic(core.clj:6965)
+; 	at clojure.core$reduce.invoke(core.clj:6947)
+; 	at integrant.core$build.invokeStatic(core.cljc:453)
+; 	at integrant.core$build.invoke(core.cljc:430)
+; 	at integrant.core$init.invokeStatic(core.cljc:675)
+; 	at integrant.core$init.invoke(core.cljc:667)
+; 	at integrant.core$init.invokeStatic(core.cljc:672)
+; 	at integrant.core$init.invoke(core.cljc:667)
+; 	at xtdb.node.impl$open_node.invokeStatic(impl.clj:282)
+; 	at xtdb.node.impl$open_node.invoke(impl.clj:279)
+; 	at clojure.lang.Var.invoke(Var.java:386)
+; 	at xtdb.api.Xtdb$Config.open(Xtdb.kt:85)
+; 	at xtdb.api.Xtdb$Companion.openNode(Xtdb.kt:109)
+; 	at xtdb.api.Xtdb.openNode(Xtdb.kt)
+; 	at xtdb.node$start_node.invokeStatic(node.clj:98)
+; 	at xtdb.node$start_node.invoke(node.clj:81)
+; 	at xtdb.node$start_node.invokeStatic(node.clj:95)
+; 	at xtdb.node$start_node.invoke(node.clj:81)
+; 	at dev.fiddle$eval12871.invokeStatic(fiddle.clj:6)
+; 	at dev.fiddle$eval12871.inv
+; oke(fiddle.clj:6)
+; 	at clojure.lang.Compiler.eval(Compiler.java:7700)
+; 	at clojure.lang.Compiler.load(Compiler.java:8165)
+; 	at user$eval12859.invokeStatic(NO_SOURCE_FILE:1)
+; 	at user$eval12859.invoke(NO_SOURCE_FILE:1)
+; 	at clojure.lang.Compiler.eval(Compiler.java:7700)
+; 	at nrepl.middleware.interruptible_eval$evaluator$run__1435$fn__1446.invoke(interruptible_eval.clj:106)
+; 	at nrepl.middleware.interruptible_eval$evaluator$run__1435.invoke(interruptible_eval.clj:101)
+; 	at nrepl.middleware.session$session_exec$session_loop__1514.invoke(session.clj:229)
+; 	at nrepl.SessionThread.run(SessionThread.java:21)
+; Caused by: java.lang.reflect.InaccessibleObjectException: Unable to make field long java.nio.Buffer.address accessible: module java.base does not "opens java.nio" to unnamed module @3e625981
+; 	at java.base/java.lang.reflect.AccessibleObject.throwInaccessibleObjectException(AccessibleObject.java:391)
+; 	at java.base/java.lang.reflect.AccessibleObject.checkCanSetAccessible(AccessibleObject.java:367)
+; 	at java.base/java.lang.re
+; flect.AccessibleObject.checkCanSetAccessible(AccessibleObject.java:315)
+; 	at java.base/java.lang.reflect.Field.checkCanSetAccessible(Field.java:183)
+; 	at java.base/java.lang.reflect.Field.setAccessible(Field.java:177)
+; 	at org.apache.arrow.memory.util.MemoryUtil.<clinit>(MemoryUtil.java:84)
+; 	... 54 more
+; Execution error (IllegalStateException) at org.apache.arrow.memory.BaseAllocator/close (BaseAllocator.java:504).
+; Memory was leaked by query. Memory leaked: (65536)
+; Outstanding child allocators : 
+;   Allocator(compactor) 0/0/0/9223372036854775807 (res/actual/peak/limit)
+; Allocator(ROOT) 0/65536/65536/9223372036854775807 (res/actual/peak/limit)
+; 
+; Evaluation of file fiddle.clj failed: class clojure.lang.Compiler$CompilerException
+clj꞉dev.fiddle꞉> 
+; Execution error (IllegalArgumentException) at xtdb.protocols/eval9141$fn$G (protocols.clj:4).
+; No implementation of method: :submit-tx of protocol: #'xtdb.protocols/PNode found for class: clojure.lang.Var$Unbound
+clj꞉dev.fiddle꞉> 
+; Jacking in...
+; Starting Jack-in: (cd /home/aaron/my_projects/tilda; clojure -Sdeps '{:deps {nrepl/nrepl {:mvn/version,"1.5.1"},cider/cider-nrepl {:mvn/version,"0.58.0"}}}' -M:dev -m nrepl.cmdline --middleware "[cider.nrepl/cider-middleware]")
+; Using host:port localhost:38063 ...
+; Hooking up nREPL sessions on port 38063...
+; Connected session: clj, port: 38063
+; Evaluating code from settings: 'calva.autoEvaluateCode.onConnect.clj'
+nil
+clj꞉user꞉> 
+; Jack-in done.
+clj꞉user꞉> 
+; Syntax error compiling at (dev/fiddle.clj:10:3).
+; Unable to resolve symbol: node in this context
+clj꞉dev.fiddle꞉> 
+; Evaluating file: fiddle.clj
+; java.lang.RuntimeException: Failed to initialize MemoryUtil. You must start Java with `--add-opens=java.base/java.nio=org.apache.arrow.memory.core,ALL-UNNAMED` (See https://arrow.apache.org/docs/java/install.html)
+; 	at org.apache.arrow.memory.util.MemoryUtil.<clinit>(MemoryUtil.java:140)
+; 	at org.apache.arrow.memory.ArrowBuf.setZero(ArrowBuf.java:1168)
+; 	at org.apache.arrow.vector.BaseFixedWidthVector.reAlloc(BaseFixedWidthVector.java:437)
+; 	at org.apache.arrow.vector.BaseFixedWidthVector.handleSafe(BaseFixedWidthVector.java:872)
+; 	at org.apache.arrow.vector.BaseFixedWidthVector.setIndexDefined(BaseFixedWidthVector.java:843)
+; 	at xtdb.vector.FixedSizeBinaryVectorWriter.writeBytes(FieldVectorWriters.kt:339)
+; 	at xtdb.vector.FixedSizeBinaryVectorWriter.writeObject0(FieldVectorWriters.kt:345)
+; 	at xtdb.vector.IVectorWriter.writeObject(IVectorWriter.kt:74)
+; 	at xtdb.information_schema$pg_user_template_page_PLUS_trie.invokeStatic(information_schema.clj:316)
+; 	at xtdb.information_schema$pg_user_template_page_PLUS_trie.invoke
+; (information_schema.clj:306)
+; 	at xtdb.information_schema$table__GT_template_rel_PLUS_tries.invokeStatic(information_schema.clj:328)
+; 	at xtdb.information_schema$table__GT_template_rel_PLUS_tries.invoke(information_schema.clj:327)
+; 	at xtdb.operator.scan$eval25834$fn__25836.invoke(scan.clj:159)
+; 	at clojure.lang.MultiFn.invoke(MultiFn.java:234)
+; 	at integrant.core$try_build_action.invokeStatic(core.cljc:419)
+; 	at integrant.core$try_build_action.invoke(core.cljc:418)
+; 	at integrant.core$build_key.invokeStatic(core.cljc:427)
+; 	at integrant.core$build_key.invoke(core.cljc:423)
+; 	at clojure.core$partial$fn__5931.invoke(core.clj:2656)
+; 	at clojure.core.protocols$fn__8275.invokeStatic(protocols.clj:167)
+; 	at clojure.core.protocols$fn__8275.invoke(protocols.clj:123)
+; 	at clojure.core.protocols$fn__8229$G__8224__8238.invoke(protocols.clj:19)
+; 	at clojure.core.protocols$seq_reduce.invokeStatic(protocols.clj:31)
+; 	at clojure.core.protocols$fn__8262.invokeStatic(protocols.clj:74)
+; 	at clojure.core.protocols$fn__8262.invoke(protocols.c
+; lj:74)
+; 	at clojure.core.protocols$fn__8203$G__8198__8216.invoke(protocols.clj:13)
+; 	at clojure.core$reduce.invokeStatic(core.clj:6965)
+; 	at clojure.core$reduce.invoke(core.clj:6947)
+; 	at integrant.core$build.invokeStatic(core.cljc:453)
+; 	at integrant.core$build.invoke(core.cljc:430)
+; 	at integrant.core$init.invokeStatic(core.cljc:675)
+; 	at integrant.core$init.invoke(core.cljc:667)
+; 	at integrant.core$init.invokeStatic(core.cljc:672)
+; 	at integrant.core$init.invoke(core.cljc:667)
+; 	at xtdb.node.impl$open_node.invokeStatic(impl.clj:282)
+; 	at xtdb.node.impl$open_node.invoke(impl.clj:279)
+; 	at clojure.lang.Var.invoke(Var.java:386)
+; 	at xtdb.api.Xtdb$Config.open(Xtdb.kt:85)
+; 	at xtdb.api.Xtdb$Companion.openNode(Xtdb.kt:109)
+; 	at xtdb.api.Xtdb.openNode(Xtdb.kt)
+; 	at xtdb.node$start_node.invokeStatic(node.clj:98)
+; 	at xtdb.node$start_node.invoke(node.clj:81)
+; 	at xtdb.node$start_node.invokeStatic(node.clj:95)
+; 	at xtdb.node$start_node.invoke(node.clj:81)
+; 	at dev.fiddle$eval12858.invokeStatic(NO_SOURCE_FILE:6)
+; 	at dev.fiddle$eval12858
+; .invoke(NO_SOURCE_FILE:6)
+; 	at clojure.lang.Compiler.eval(Compiler.java:7700)
+; 	at nrepl.middleware.interruptible_eval$evaluator$run__1435$fn__1446.invoke(interruptible_eval.clj:106)
+; 	at nrepl.middleware.interruptible_eval$evaluator$run__1435.invoke(interruptible_eval.clj:101)
+; 	at nrepl.middleware.session$session_exec$session_loop__1514.invoke(session.clj:229)
+; 	at nrepl.SessionThread.run(SessionThread.java:21)
+; Caused by: java.lang.reflect.InaccessibleObjectException: Unable to make field long java.nio.Buffer.address accessible: module java.base does not "opens java.nio" to unnamed module @4690a4a2
+; 	at java.base/java.lang.reflect.AccessibleObject.throwInaccessibleObjectException(AccessibleObject.java:391)
+; 	at java.base/java.lang.reflect.AccessibleObject.checkCanSetAccessible(AccessibleObject.java:367)
+; 	at java.base/java.lang.reflect.AccessibleObject.checkCanSetAccessible(AccessibleObject.java:315)
+; 	at java.base/java.lang.reflect.Field.checkCanSetAccessible(Field.java:183)
+; 	at java.base/java.lang.reflect.Field.se
+; tAccessible(Field.java:177)
+; 	at org.apache.arrow.memory.util.MemoryUtil.<clinit>(MemoryUtil.java:84)
+; 	... 50 more
+; Execution error (IllegalStateException) at org.apache.arrow.memory.BaseAllocator/close (BaseAllocator.java:504).
+; Memory was leaked by query. Memory leaked: (65536)
+; Outstanding child allocators : 
+;   Allocator(compactor) 0/0/0/9223372036854775807 (res/actual/peak/limit)
+; Allocator(ROOT) 0/65536/65536/9223372036854775807 (res/actual/peak/limit)
+; 
+clj꞉dev.fiddle꞉> 
+; 
+; ; clj  dev.fiddle 
+; Execution error (IllegalStateException) at org.apache.arrow.memory.BaseAllocator/close (BaseAllocator.java:504).
+; Memory was leaked by query. Memory leaked: (65536)
+; Outstanding child allocators : 
+;   Allocator(compactor) 0/0/0/9223372036854775807 (res/actual/peak/limit)
+; Allocator(ROOT) 0/65536/65536/9223372036854775807 (res/actual/peak/limit)
+; 
+; Evaluation of file fiddle.clj failed: class clojure.lang.Compiler$CompilerException
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   user
+;   user-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉user꞉> 
+; Jacking in...
+; Connecting using "deps.edn" project type.
+; Starting Jack-in: (cd /home/aaron/my_projects/tilda; clojure -Sdeps '{:deps {nrepl/nrepl {:mvn/version,"1.5.1"},cider/cider-nrepl {:mvn/version,"0.58.0"}}}' -M:dev -m nrepl.cmdline --middleware "[cider.nrepl/cider-middleware]")
+; Using host:port localhost:40053 ...
+; Hooking up nREPL sessions on port 40053...
+; Connected session: clj, port: 40053
+; Evaluating code from settings: 'calva.autoEvaluateCode.onConnect.clj'
+nil
+clj꞉user꞉> 
+; Jack-in done.
+clj꞉user꞉> 
+; Evaluating file: fiddle.clj
+; 
+; ; clj  dev.fiddle 
+; SLF4J(W): No SLF4J providers were found.
+; SLF4J(W): Defaulting to no-operation (NOP) logger implementation
+; SLF4J(W): See https://www.slf4j.org/codes.html#noProviders for further details.
+nil
+clj꞉dev.fiddle꞉> 
+0
+clj꞉dev.fiddle꞉> 
+nil
+clj꞉dev.fiddle꞉> 
+1
+clj꞉dev.fiddle꞉> 
+2
+clj꞉dev.fiddle꞉> 
+[{:xt/id :b1, :date "2026-02-24", :notes "test"}]
+clj꞉dev.fiddle꞉> 
+3
+clj꞉dev.fiddle꞉> 
+4
+clj꞉dev.fiddle꞉> 
+5
+clj꞉dev.fiddle꞉> 
+[{:xt/id :b1, :date "2026-02-24", :notes "test"}]
+clj꞉dev.fiddle꞉> 
+[{:xt/id :b1, :date "2026-02-24", :notes "test"}]
+clj꞉dev.fiddle꞉> 
+[{:xt/id :b1, :date "2026-02-24", :notes "test"}]
+clj꞉dev.fiddle꞉> 
+6
+clj꞉dev.fiddle꞉> 
+[{:xt/id :b1, :date "2026-02-25", :notes "test"}]
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+[{:xt/id :b1, :date "2026-02-25", :notes "test"}]
+clj꞉dev.fiddle꞉> 
+; Syntax error reading source at (REPL:10:86).
+; Map literal must contain an even number of forms
+clj꞉dev.fiddle꞉> 
+7
+clj꞉dev.fiddle꞉> 
+[{:xt/id 123, :date "2026-02-25", :notes "test"} {:xt/id :b1, :date "2026-02-25", :notes "test"}]
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   user
+;   user-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉user꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+{:tenant-name "Val"}
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+{:tenant-name "Val", :start-date "2026-02-28"}
+clj꞉dev.fiddle꞉> 
+; Execution error (ClassCastException) at dev.fiddle/eval36115 (REPL:12).
+; class java.lang.Class cannot be cast to class clojure.lang.IFn (java.lang.Class is in module java.base of loader 'bootstrap'; clojure.lang.IFn is in unnamed module of loader 'app')
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+#xt/instant "2026-02-28T00:00:00Z"
+clj꞉dev.fiddle꞉> 
+8
+clj꞉dev.fiddle꞉> 
+[{:xt/id 123, :notes "test"} {:xt/id :b1, :date "2026-02-25", :notes "test"}]
+clj꞉dev.fiddle꞉> 
+[{:xt/id 123, :notes "test"} {:xt/id :b1, :date "2026-02-25", :notes "test"}]
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+#xt/instant "2026-02-28T00:00:00Z"
+clj꞉dev.fiddle꞉> 
+#xt/instant "2026-02-28T00:00:00Z"
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+{:tenant-name "Val", :start-date #xt/instant "2026-02-28T00:00:00Z"}
+clj꞉dev.fiddle꞉> 
+{:tenant-name "Val", :start-date #xt/instant "2026-02-28T00:00:00Z"}
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+{:tenant-name "Val", :start-date #xt/instant "2026-02-28T00:00:00Z", :end-date #xt/instant "2026-03-01T00:00:00Z"}
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+{:tenant-name "Val", :start-date #xt/instant "2026-02-28T00:00:00Z", :end-date #xt/instant "2026-03-01T00:00:00Z"}
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Execution error (IllegalArgumentException) at xtdb.error/illegal-arg (error.clj:11).
+; expected xt/id
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+9
+clj꞉dev.fiddle꞉> 
+[{:xt/id 123, :notes "test"}
+ {:xt/id :b1, :date "2026-02-25", :notes "test"}
+ {:end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :tenant-name "Val",
+  :type :slot-reserved,
+  :xt/id #uuid "f79cbddd-ba38-468a-a56d-a187ae6889a7",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]"}]
+clj꞉dev.fiddle꞉> 
+10
+clj꞉dev.fiddle꞉> 
+[{:xt/id 123, :notes "test"}
+ {:xt/id :b1, :date "2026-02-25", :notes "test"}
+ {:end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :tenant-name "Val",
+  :type :slot-reserved,
+  :xt/id #uuid "b3660d62-8228-471f-9510-8d481e7bba41",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]"}
+ {:end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :tenant-name "Val",
+  :type :slot-reserved,
+  :xt/id #uuid "f79cbddd-ba38-468a-a56d-a187ae6889a7",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]"}]
+clj꞉dev.fiddle꞉> 
+[{:xt/id 123, :notes "test"}
+ {:xt/id :b1, :date "2026-02-25", :notes "test"}
+ {:end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :tenant-name "Val",
+  :type :slot-reserved,
+  :xt/id #uuid "b3660d62-8228-471f-9510-8d481e7bba41",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]"}
+ {:end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :tenant-name "Val",
+  :type :slot-reserved,
+  :xt/id #uuid "f79cbddd-ba38-468a-a56d-a187ae6889a7",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]"}]
+clj꞉dev.fiddle꞉> 
+[{:xt/id 123, :notes "test"}
+ {:xt/id :b1, :date "2026-02-25", :notes "test"}
+ {:xt/id #uuid "b3660d62-8228-471f-9510-8d481e7bba41",
+  :end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]",
+  :tenant-name "Val",
+  :type :slot-reserved}
+ {:xt/id #uuid "f79cbddd-ba38-468a-a56d-a187ae6889a7",
+  :end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]",
+  :tenant-name "Val",
+  :type :slot-reserved}]
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+11
+clj꞉dev.fiddle꞉> 
+[]
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Execution error (IllegalArgumentException) at xtdb.error/illegal-arg (error.clj:11).
+; Errors parsing SQL statement:
+;   - line 1:14 extraneous input ':' expecting {'(', 'AGE', 'ARROW_TABLE', 'AVG', 'BOOL_AND', 'BOOL_OR', 'BYTEA', 'CARDINALITY', 'COMMITTED', 'COUNT', 'DELETE', 'END', 'ERASE', 'EVERY', 'GENERATE_SERIES', 'INSERT', 'LATERAL', 'LOCAL_NAME', 'MAX', 'MIN', 'NAMESPACE', 'PASSWORD', 'ROLE', 'SELECT', 'SETTING', 'START', 'STDDEV_POP', 'STDDEV_SAMP', 'STR', 'SUM', 'SYSTEM_TIME', 'TIMEZONE', 'UNCOMMITTED', 'UNNEST', 'UPDATE', 'URI', 'USER', 'VALID_TIME', 'VAR_POP', 'VAR_SAMP', 'VARBINARY', 'VERSION', REGULAR_IDENTIFIER, DELIMITED_IDENTIFIER}
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Execution error (IllegalArgumentException) at xtdb.error/illegal-arg (error.clj:11).
+; Errors parsing SQL statement:
+;   - line 1:14 extraneous input ':' expecting {'(', 'AGE', 'ARROW_TABLE', 'AVG', 'BOOL_AND', 'BOOL_OR', 'BYTEA', 'CARDINALITY', 'COMMITTED', 'COUNT', 'DELETE', 'END', 'ERASE', 'EVERY', 'GENERATE_SERIES', 'INSERT', 'LATERAL', 'LOCAL_NAME', 'MAX', 'MIN', 'NAMESPACE', 'PASSWORD', 'ROLE', 'SELECT', 'SETTING', 'START', 'STDDEV_POP', 'STDDEV_SAMP', 'STR', 'SUM', 'SYSTEM_TIME', 'TIMEZONE', 'UNCOMMITTED', 'UNNEST', 'UPDATE', 'URI', 'USER', 'VALID_TIME', 'VAR_POP', 'VAR_SAMP', 'VARBINARY', 'VERSION', REGULAR_IDENTIFIER, DELIMITED_IDENTIFIER}
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+[]
+clj꞉dev.fiddle꞉> 
+[{:xt/id 123, :notes "test"}
+ {:xt/id :b1, :date "2026-02-25", :notes "test"}
+ {:end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :tenant-name "Flo",
+  :type :slot-reserved,
+  :xt/id #uuid "895e86d2-3070-4e8c-a82d-6c3df958fb4f",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]"}
+ {:end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :tenant-name "Val",
+  :type :slot-reserved,
+  :xt/id #uuid "b3660d62-8228-471f-9510-8d481e7bba41",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]"}
+ {:end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :tenant-name "Val",
+  :type :slot-reserved,
+  :xt/id #uuid "f79cbddd-ba38-468a-a56d-a187ae6889a7",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]"}]
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+[{:xt/id 123, :notes "test"}
+ {:xt/id :b1, :date "2026-02-25", :notes "test"}
+ {:end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :tenant-name "Flo",
+  :type :slot-reserved,
+  :xt/id #uuid "895e86d2-3070-4e8c-a82d-6c3df958fb4f",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]"}
+ {:end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :tenant-name "Val",
+  :type :slot-reserved,
+  :xt/id #uuid "b3660d62-8228-471f-9510-8d481e7bba41",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]"}
+ {:end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :tenant-name "Val",
+  :type :slot-reserved,
+  :xt/id #uuid "f79cbddd-ba38-468a-a56d-a187ae6889a7",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]"}]
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Running tests for the following namespaces:
+;   dev.fiddle
+;   dev.fiddle-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.fiddle꞉> 
+; Jacking in...
+; Connecting using "deps.edn" project type.
+; Starting Jack-in: (cd /home/aaron/my_projects/tilda; clojure -Sdeps '{:deps {nrepl/nrepl {:mvn/version,"1.5.1"},cider/cider-nrepl {:mvn/version,"0.58.0"}}}' -M:dev -m nrepl.cmdline --middleware "[cider.nrepl/cider-middleware]")
+; Using host:port localhost:35533 ...
+; Hooking up nREPL sessions on port 35533...
+; Connected session: clj, port: 35533
+; Evaluating code from settings: 'calva.autoEvaluateCode.onConnect.clj'
+nil
+clj꞉user꞉> 
+"Please see https://calva.io/output/#about-stdout-in-the-repl-window
+about why stdout printed to this file is prepended with `;` to be line comments."
+clj꞉user꞉> 
+; Jack-in done.
+clj꞉user꞉> 
+; Evaluating file: booking_examples.clj
+nil
+clj꞉dev.booking-examples꞉> 
+#'dev.booking-examples/create-booking!
+clj꞉dev.booking-examples꞉> 
+#'dev.booking-examples/cancel-booking!
+clj꞉dev.booking-examples꞉> 
+#'dev.booking-examples/all-bookings
+clj꞉dev.booking-examples꞉> 
+#'dev.booking-examples/bookings-by-tenant
+clj꞉dev.booking-examples꞉> 
+#'dev.booking-examples/pending-bookings
+clj꞉dev.booking-examples꞉> 
+#'dev.booking-examples/bookings-in-range
+clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   dev.booking-examples
+;   dev.booking-examples-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.booking-examples꞉> 
+#'dev.booking-examples/booking-history
+clj꞉dev.booking-examples꞉> 
+#'dev.booking-examples/find-conflicts
+clj꞉dev.booking-examples꞉> 
+#'dev.booking-examples/can-book?
+clj꞉dev.booking-examples꞉> 
+#'dev.booking-examples/try-book!
+clj꞉dev.booking-examples꞉> 
+#'dev.booking-examples/attempts-by-tenant
+clj꞉dev.booking-examples꞉> 
+#'dev.booking-examples/request-slot!
+clj꞉dev.booking-examples꞉> 
+#'dev.booking-examples/pending-requests-for-slot
+clj꞉dev.booking-examples꞉> 
+#'dev.booking-examples/decide-first-come-first-serve
+clj꞉dev.booking-examples꞉> 
+#'dev.booking-examples/decide-by-priority
+clj꞉dev.booking-examples꞉> 
+#'dev.booking-examples/decide-random-lottery
+clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   dev.booking-examples
+;   dev.booking-examples-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   dev.booking-examples
+;   dev.booking-examples-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.booking-examples꞉> 
+#'dev.booking-examples/decide-first-come-first-serve
+clj꞉dev.booking-examples꞉> 
+#'dev.booking-examples/decide-by-priority
+clj꞉dev.booking-examples꞉> 
+#'dev.booking-examples/decide-random-lottery
+clj꞉dev.booking-examples꞉> 
+#'dev.booking-examples/decide-least-recent-winner
+clj꞉dev.booking-examples꞉> 
+#'dev.booking-examples/resolve-slot!
+clj꞉dev.booking-examples꞉> 
+#'dev.booking-examples/slots-needing-resolution
+clj꞉dev.booking-examples꞉> 
+#'dev.booking-examples/install-tx-fns!
+clj꞉dev.booking-examples꞉> 
+{:ok #uuid "b159fdfa-ddc1-4272-92c4-8e7c58d5f2ad", :attempt-id #uuid "3a8129ab-a787-48ad-ad9f-05cb9692b000"}
+clj꞉dev.booking-examples꞉> 
+{:conflict
+ [{:id #uuid "b159fdfa-ddc1-4272-92c4-8e7c58d5f2ad",
+   :tenant-name "Flo",
+   :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]",
+   :end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+   :status :pending}],
+ :attempt-id #uuid "fcca5845-3c7b-47c4-a292-058fbdbe916d"}
+clj꞉dev.booking-examples꞉> 
+{:conflict
+ [{:id #uuid "b159fdfa-ddc1-4272-92c4-8e7c58d5f2ad",
+   :tenant-name "Flo",
+   :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]",
+   :end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+   :status :pending}],
+ :attempt-id #uuid "d291791f-6217-4c7a-94c4-80839fcce1d5"}
+clj꞉dev.booking-examples꞉> 
+{:conflict
+ [{:id #uuid "b159fdfa-ddc1-4272-92c4-8e7c58d5f2ad",
+   :tenant-name "Flo",
+   :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]",
+   :end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+   :status :pending}],
+ :attempt-id #uuid "d3cea011-8956-43d4-bdde-250e8bd1335b"}
+clj꞉dev.booking-examples꞉> 
+{:conflict
+ [{:id #uuid "b159fdfa-ddc1-4272-92c4-8e7c58d5f2ad",
+   :tenant-name "Flo",
+   :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]",
+   :end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+   :status :pending}],
+ :attempt-id #uuid "57c2c6e3-c1be-41e3-9920-a270e2aa9e5e"}
+clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   dev.booking-examples
+;   dev.booking-examples-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   dev.booking-examples
+;   dev.booking-examples-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.booking-examples꞉> 
+{:conflict
+ [{:id #uuid "b159fdfa-ddc1-4272-92c4-8e7c58d5f2ad",
+   :tenant-name "Flo",
+   :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]",
+   :end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+   :status :pending}],
+ :attempt-id #uuid "8a162258-b822-4960-8e0c-f28c224f4b2f"}
+clj꞉dev.booking-examples꞉> 
+#'dev.booking-examples/booking-id
+clj꞉dev.booking-examples꞉> 
+[{:end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :tenant-name "Flo",
+  :approvals #{},
+  :status :pending,
+  :xt/id #uuid "201546b2-56a7-47e1-a1b1-36f825fba5cb",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]"}
+ {:end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :tenant-name "Flo",
+  :approvals #{},
+  :status :pending,
+  :xt/id #uuid "b159fdfa-ddc1-4272-92c4-8e7c58d5f2ad",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]"}]
+clj꞉dev.booking-examples꞉> 
+[{:end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :tenant-name "Flo",
+  :approvals #{},
+  :status :pending,
+  :xt/id #uuid "201546b2-56a7-47e1-a1b1-36f825fba5cb",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]"}
+ {:end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :tenant-name "Flo",
+  :approvals #{},
+  :status :pending,
+  :xt/id #uuid "b159fdfa-ddc1-4272-92c4-8e7c58d5f2ad",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]"}]
+clj꞉dev.booking-examples꞉> 
+[{:end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :tenant-name "Flo",
+  :approvals #{},
+  :status :pending,
+  :xt/id #uuid "201546b2-56a7-47e1-a1b1-36f825fba5cb",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]"}
+ {:end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :tenant-name "Flo",
+  :approvals #{},
+  :status :pending,
+  :xt/id #uuid "b159fdfa-ddc1-4272-92c4-8e7c58d5f2ad",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]"}]
+clj꞉dev.booking-examples꞉> 
+[{:end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :tenant-name "Flo",
+  :approvals #{},
+  :status :pending,
+  :xt/id #uuid "201546b2-56a7-47e1-a1b1-36f825fba5cb",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]"}
+ {:end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :tenant-name "Flo",
+  :approvals #{},
+  :status :pending,
+  :xt/id #uuid "b159fdfa-ddc1-4272-92c4-8e7c58d5f2ad",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]"}]
+clj꞉dev.booking-examples꞉> 
+8
+clj꞉dev.booking-examples꞉> 
+9
+clj꞉dev.booking-examples꞉> 
+[{:end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :tenant-name "Flo",
+  :approvals #{"Val" "Aaron"},
+  :status :pending,
+  :xt/id #uuid "201546b2-56a7-47e1-a1b1-36f825fba5cb",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]"}]
+clj꞉dev.booking-examples꞉> 
+10
+clj꞉dev.booking-examples꞉> 
+[{:end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :tenant-name "Flo",
+  :approvals #{"Val" "Aaron"},
+  :status :confirmed,
+  :xt/id #uuid "201546b2-56a7-47e1-a1b1-36f825fba5cb",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]"}
+ {:end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :tenant-name "Flo",
+  :approvals #{"Val" "Aaron"},
+  :status :pending,
+  :xt/id #uuid "201546b2-56a7-47e1-a1b1-36f825fba5cb",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]"}
+ {:end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :tenant-name "Flo",
+  :approvals #{"Val"},
+  :status :pending,
+  :xt/id #uuid "201546b2-56a7-47e1-a1b1-36f825fba5cb",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]"}
+ {:end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :tenant-name "Flo",
+  :approvals #{},
+  :status :pending,
+  :xt/id #uuid "201546b2-56a7-47e1-a1b1-36f825fba5cb",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]"}]
+clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   dev.booking-examples
+;   dev.booking-examples-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.booking-examples꞉> 
+({:end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :tenant-name "Flo",
+  :approvals #{"Val" "Aaron"},
+  :status :confirmed,
+  :xt/id #uuid "201546b2-56a7-47e1-a1b1-36f825fba5cb",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]"}
+ {:end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :tenant-name "Flo",
+  :approvals #{"Val" "Aaron"},
+  :status :pending,
+  :xt/id #uuid "201546b2-56a7-47e1-a1b1-36f825fba5cb",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]"}
+ {:end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :tenant-name "Flo",
+  :approvals #{"Val"},
+  :status :pending,
+  :xt/id #uuid "201546b2-56a7-47e1-a1b1-36f825fba5cb",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]"}
+ {:end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :tenant-name "Flo",
+  :approvals #{},
+  :status :pending,
+  :xt/id #uuid "201546b2-56a7-47e1-a1b1-36f825fba5cb",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]"})
+clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   dev.booking-examples
+;   dev.booking-examples-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.booking-examples꞉> 
+false
+clj꞉dev.booking-examples꞉> 
+false
+clj꞉dev.booking-examples꞉> 
+false
+clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   dev.booking-examples
+;   dev.booking-examples-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.booking-examples꞉> 
+false
+clj꞉dev.booking-examples꞉> 
+false
+clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   dev.booking-examples
+;   dev.booking-examples-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   dev.booking-examples
+;   dev.booking-examples-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.booking-examples꞉> 
+{:conflict
+ [{:id #uuid "201546b2-56a7-47e1-a1b1-36f825fba5cb",
+   :tenant-name "Flo",
+   :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]",
+   :end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+   :status :confirmed}
+  {:id #uuid "b159fdfa-ddc1-4272-92c4-8e7c58d5f2ad",
+   :tenant-name "Flo",
+   :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]",
+   :end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+   :status :pending}],
+ :attempt-id #uuid "2c50d737-d14e-46eb-bad6-0c07227d3b21"}
+clj꞉dev.booking-examples꞉> 
+{:conflict
+ [{:id #uuid "201546b2-56a7-47e1-a1b1-36f825fba5cb",
+   :tenant-name "Flo",
+   :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]",
+   :end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+   :status :confirmed}
+  {:id #uuid "b159fdfa-ddc1-4272-92c4-8e7c58d5f2ad",
+   :tenant-name "Flo",
+   :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]",
+   :end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+   :status :pending}],
+ :attempt-id #uuid "2b5b5803-3444-41b0-9e7a-a3963a123acf"}
+clj꞉dev.booking-examples꞉> 
+false
+clj꞉dev.booking-examples꞉> 
+false
+clj꞉dev.booking-examples꞉> 
+[{:id #uuid "201546b2-56a7-47e1-a1b1-36f825fba5cb",
+  :tenant-name "Flo",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]",
+  :end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :status :confirmed}
+ {:id #uuid "b159fdfa-ddc1-4272-92c4-8e7c58d5f2ad",
+  :tenant-name "Flo",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]",
+  :end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :status :pending}]
+clj꞉dev.booking-examples꞉> 
+[{:id #uuid "201546b2-56a7-47e1-a1b1-36f825fba5cb",
+  :tenant-name "Flo",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]",
+  :end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :status :confirmed}
+ {:id #uuid "b159fdfa-ddc1-4272-92c4-8e7c58d5f2ad",
+  :tenant-name "Flo",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]",
+  :end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :status :pending}]
+clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   dev.booking-examples
+;   dev.booking-examples-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   dev.booking-examples
+;   dev.booking-examples-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.booking-examples꞉> 
+#'dev.booking-examples/find-conflicts
+clj꞉dev.booking-examples꞉> 
+[{:id #uuid "201546b2-56a7-47e1-a1b1-36f825fba5cb",
+  :tenant-name "Flo",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]",
+  :end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :status :confirmed}
+ {:id #uuid "b159fdfa-ddc1-4272-92c4-8e7c58d5f2ad",
+  :tenant-name "Flo",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]",
+  :end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :status :pending}]
+clj꞉dev.booking-examples꞉> 
+[{:id #uuid "201546b2-56a7-47e1-a1b1-36f825fba5cb",
+  :tenant-name "Flo",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]",
+  :end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :status :confirmed}
+ {:id #uuid "b159fdfa-ddc1-4272-92c4-8e7c58d5f2ad",
+  :tenant-name "Flo",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]",
+  :end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :status :pending}]
+clj꞉dev.booking-examples꞉> 
+#'dev.booking-examples/find-conflicts
+clj꞉dev.booking-examples꞉> 
+[{:id #uuid "201546b2-56a7-47e1-a1b1-36f825fba5cb", :tenant-name "Flo", :status :confirmed}
+ {:id #uuid "b159fdfa-ddc1-4272-92c4-8e7c58d5f2ad", :tenant-name "Flo", :status :pending}]
+clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   dev.booking-examples
+;   dev.booking-examples-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.booking-examples꞉> 
+; Syntax error compiling at (dev/booking_examples.clj:126:19).
+; Unable to resolve symbol: start in this context
+clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   dev.booking-examples
+;   dev.booking-examples-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   dev.booking-examples
+;   dev.booking-examples-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   dev.booking-examples
+;   dev.booking-examples-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.booking-examples꞉> 
+; Syntax error compiling at (dev/booking_examples.clj:126:19).
+; Unable to resolve symbol: start-date in this context
+clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   dev.booking-examples
+;   dev.booking-examples-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   dev.booking-examples
+;   dev.booking-examples-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   dev.booking-examples
+;   dev.booking-examples-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   dev.booking-examples
+;   dev.booking-examples-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   dev.booking-examples
+;   dev.booking-examples-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.booking-examples꞉> 
+#'dev.booking-examples/find-conflicts
+clj꞉dev.booking-examples꞉> 
+[{:id #uuid "201546b2-56a7-47e1-a1b1-36f825fba5cb",
+  :tenant-name "Flo",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]",
+  :end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :status :confirmed}
+ {:id #uuid "b159fdfa-ddc1-4272-92c4-8e7c58d5f2ad",
+  :tenant-name "Flo",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]",
+  :end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :status :pending}]
+clj꞉dev.booking-examples꞉> 
+[{:id #uuid "201546b2-56a7-47e1-a1b1-36f825fba5cb",
+  :tenant-name "Flo",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]",
+  :end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :status :confirmed}
+ {:id #uuid "b159fdfa-ddc1-4272-92c4-8e7c58d5f2ad",
+  :tenant-name "Flo",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]",
+  :end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :status :pending}]
+clj꞉dev.booking-examples꞉> 
+[{:end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :tenant-name "Flo",
+  :approvals #{"Val" "Aaron"},
+  :status :confirmed,
+  :xt/id #uuid "201546b2-56a7-47e1-a1b1-36f825fba5cb",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]"}
+ {:end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :tenant-name "Flo",
+  :approvals #{},
+  :status :pending,
+  :xt/id #uuid "b159fdfa-ddc1-4272-92c4-8e7c58d5f2ad",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]"}]
+clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   dev.booking-examples
+;   dev.booking-examples-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   dev.booking-examples
+;   dev.booking-examples-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.booking-examples꞉> 
+; Syntax error macroexpanding clojure.core/let at (dev/booking_examples.clj:139:3).
+; {start end} - failed: vector? at: [:bindings :form :map-destructure :keys] spec: :clojure.core.specs.alpha/keys
+; {:keys {start end}} - failed: simple-symbol? at: [:bindings :form :local-symbol] spec: :clojure.core.specs.alpha/local-name
+; {:keys {start end}} - failed: vector? at: [:bindings :form :seq-destructure] spec: :clojure.core.specs.alpha/seq-binding-form
+clj꞉dev.booking-examples꞉> 
+; Syntax error compiling at (dev/booking_examples.clj:139:3).
+; Unable to resolve symbol: example-date-range in this context
+clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   dev.booking-examples
+;   dev.booking-examples-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.booking-examples꞉> 
+; Syntax error compiling at (dev/booking_examples.clj:139:3).
+; Unable to resolve symbol: example-date-range in this context
+clj꞉dev.booking-examples꞉> 
+#'dev.booking-examples/example-date-range
+clj꞉dev.booking-examples꞉> 
+; Execution error (ArityException) at dev.booking-examples/eval36410 (REPL:140).
+; Wrong number of args (1) passed to: dev.booking-examples/find-conflicts
+clj꞉dev.booking-examples꞉> 
+[{:id #uuid "201546b2-56a7-47e1-a1b1-36f825fba5cb",
+  :tenant-name "Flo",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]",
+  :end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :status :confirmed}
+ {:id #uuid "b159fdfa-ddc1-4272-92c4-8e7c58d5f2ad",
+  :tenant-name "Flo",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]",
+  :end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :status :pending}]
+clj꞉dev.booking-examples꞉> 
+; Execution error (ClassCastException) at dev.booking-examples/eval36416 (REPL:153).
+; class java.time.Instant cannot be cast to class java.lang.Number (java.time.Instant and java.lang.Number are in module java.base of loader 'bootstrap')
+clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   dev.booking-examples
+;   dev.booking-examples-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.booking-examples꞉> 
+; Execution error (ClassCastException) at dev.booking-examples/eval36419 (REPL:153).
+; class java.time.Instant cannot be cast to class java.lang.Number (java.time.Instant and java.lang.Number are in module java.base of loader 'bootstrap')
+clj꞉dev.booking-examples꞉> 
+; Execution error (ClassCastException) at dev.booking-examples/eval36422 (REPL:153).
+; class java.time.Instant cannot be cast to class java.lang.Number (java.time.Instant and java.lang.Number are in module java.base of loader 'bootstrap')
+clj꞉dev.booking-examples꞉> 
+#'dev.booking-examples/example-date-range
+clj꞉dev.booking-examples꞉> 
+{:start #xt/instant "2026-04-04T00:00:00Z", :end #xt/instant "2026-04-05T00:00:00Z"}
+clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   dev.booking-examples
+;   dev.booking-examples-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.booking-examples꞉> 
+true
+clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   dev.booking-examples
+;   dev.booking-examples-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.booking-examples꞉> 
+true
+clj꞉dev.booking-examples꞉> 
+[{:end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :tenant-name "Flo",
+  :approvals #{"Val" "Aaron"},
+  :status :confirmed,
+  :xt/id #uuid "201546b2-56a7-47e1-a1b1-36f825fba5cb",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]"}
+ {:end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :tenant-name "Flo",
+  :approvals #{},
+  :status :pending,
+  :xt/id #uuid "b159fdfa-ddc1-4272-92c4-8e7c58d5f2ad",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]"}]
+clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   dev.booking-examples
+;   dev.booking-examples-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.booking-examples꞉> 
+[{:end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :tenant-name "Flo",
+  :approvals #{"Val" "Aaron"},
+  :status :confirmed,
+  :xt/id #uuid "201546b2-56a7-47e1-a1b1-36f825fba5cb",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]"}
+ {:end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :tenant-name "Flo",
+  :approvals #{},
+  :status :pending,
+  :xt/id #uuid "b159fdfa-ddc1-4272-92c4-8e7c58d5f2ad",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]"}]
+clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   dev.booking-examples
+;   dev.booking-examples-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.booking-examples꞉> 
+[{:end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :tenant-name "Flo",
+  :approvals #{"Val" "Aaron"},
+  :status :confirmed,
+  :xt/id #uuid "201546b2-56a7-47e1-a1b1-36f825fba5cb",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]"}
+ {:end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :tenant-name "Flo",
+  :approvals #{},
+  :status :pending,
+  :xt/id #uuid "b159fdfa-ddc1-4272-92c4-8e7c58d5f2ad",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]"}]
+clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   dev.booking-examples
+;   dev.booking-examples-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   dev.booking-examples
+;   dev.booking-examples-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.booking-examples꞉> 
+nil
+clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   dev.booking-examples
+;   dev.booking-examples-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.booking-examples꞉> 
+({:end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :tenant-name "Flo",
+  :approvals #{"Val" "Aaron"},
+  :status :confirmed,
+  :xt/id #uuid "201546b2-56a7-47e1-a1b1-36f825fba5cb",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]"})
+clj꞉dev.booking-examples꞉> 
+({:end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :tenant-name "Flo",
+  :approvals #{"Val" "Aaron"},
+  :status :confirmed,
+  :xt/id #uuid "201546b2-56a7-47e1-a1b1-36f825fba5cb",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]"})
+clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   dev.booking-examples
+;   dev.booking-examples-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   dev.booking-examples
+;   dev.booking-examples-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.booking-examples꞉> 
+({:end-date #xt/zoned-date-time "2026-03-01T00:00Z[UTC]",
+  :tenant-name "Flo",
+  :approvals #{"Val" "Aaron"},
+  :status :confirmed,
+  :xt/id #uuid "201546b2-56a7-47e1-a1b1-36f825fba5cb",
+  :start-date #xt/zoned-date-time "2026-02-28T00:00Z[UTC]"})
+clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   dev.booking-examples
+;   dev.booking-examples-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.booking-examples꞉> 
+; Jacking in...
+; Connecting using "deps.edn" project type.
+; Starting Jack-in: (cd /home/aaron/my_projects/tilda; clojure -Sdeps '{:deps {nrepl/nrepl {:mvn/version,"1.5.1"},cider/cider-nrepl {:mvn/version,"0.58.0"}}}' -M:dev -m nrepl.cmdline --middleware "[cider.nrepl/cider-middleware]")
+; Using host:port localhost:41235 ...
+; Hooking up nREPL sessions on port 41235...
+; Connected session: clj, port: 41235
+; Evaluating code from settings: 'calva.autoEvaluateCode.onConnect.clj'
+nil
+clj꞉user꞉> 
+"Please see https://calva.io/output/#about-stdout-in-the-repl-window
+about why stdout printed to this file is prepended with `;` to be line comments."
+clj꞉user꞉> 
+; Jack-in done.
+clj꞉user꞉> 
+#'dev.booking-examples/find-conflicts
+clj꞉dev.booking-examples꞉> 
+; Syntax error compiling at (dev/booking_examples.clj:149:3).
+; Unable to resolve symbol: example-date-range in this context
+clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   dev.booking-examples
+;   dev.booking-examples-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.booking-examples꞉> 
+#'dev.booking-examples/find-conflicts
+clj꞉dev.booking-examples꞉> 
+; Evaluating file: booking_examples.clj
+nil
+clj꞉dev.booking-examples꞉> 
+{:ok #uuid "1996a537-2c27-422f-b688-7fb86e24bbb0", :attempt-id #uuid "c3a69fc8-cb42-4383-a89b-00a52a817326"}
+clj꞉dev.booking-examples꞉> 
+; Execution error (ClassCastException) at dev.booking-examples/find-conflicts$fn (booking_examples.clj:139).
+; class java.time.Instant cannot be cast to class java.lang.Number (java.time.Instant and java.lang.Number are in module java.base of loader 'bootstrap')
+clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   dev.booking-examples
+;   dev.booking-examples-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   dev.booking-examples
+;   dev.booking-examples-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   dev.booking-examples
+;   dev.booking-examples-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   dev.booking-examples
+;   dev.booking-examples-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   dev.booking-examples
+;   dev.booking-examples-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.booking-examples꞉> 
+#'dev.booking-examples/find-conflicts
+clj꞉dev.booking-examples꞉> 
+; Evaluating file: booking_examples.clj
+nil
+clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   dev.booking-examples
+;   dev.booking-examples-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   dev.booking-examples
+;   dev.booking-examples-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   user
+;   user-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉user꞉> 
+; Running tests for the following namespaces:
+;   tilda.booking
+;   tilda.booking-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉tilda.booking꞉> 
+; Running tests for the following namespaces:
+;   tilda.booking-test
+;   tilda.booking
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉tilda.booking-test꞉> 
+; Running tests for the following namespaces:
+;   tilda.booking
+;   tilda.booking-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉tilda.booking꞉> 
+; Running tests for the following namespaces:
+;   tilda.booking-test
+;   tilda.booking
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉tilda.booking-test꞉> 
+; Running tests for the following namespaces:
+;   user
+;   user-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉user꞉> 
+; Running tests for the following namespaces:
+;   tilda.booking
+;   tilda.booking-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉tilda.booking꞉> 
+; Running tests for the following namespaces:
+;   tilda.booking
+;   tilda.booking-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉tilda.booking꞉> 
+; Running tests for the following namespaces:
+;   tilda.booking-test
+;   tilda.booking
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉tilda.booking-test꞉> 
+; Running tests for the following namespaces:
+;   tilda.booking
+;   tilda.booking-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉tilda.booking꞉> 
+; Running tests for the following namespaces:
+;   tilda.booking
+;   tilda.booking-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉tilda.booking꞉> 
+; Running tests for the following namespaces:
+;   tilda.booking
+;   tilda.booking-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉tilda.booking꞉> 
+; Running tests for the following namespaces:
+;   dev.booking-examples
+;   dev.booking-examples-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   dev.booking-examples
+;   dev.booking-examples-test
+
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.booking-examples꞉> 
+; Running tests for the following namespaces:
+;   user
+;   user-test
+
+; Running tests for the following namespaces:
+;   tilda.booking-test
+;   tilda.booking
+
+; Running tests for the following namespaces:
+;   tilda.booking
+;   tilda.booking-test
+
+; Running tests for the following namespaces:
+;   dev.booking-examples
+;   dev.booking-examples-test
+
+; No tests found. 😱, ns: 0, vars: 0
+; No tests found. 😱, ns: 0, vars: 0
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉user꞉> 
+clj꞉tilda.booking-test꞉> 
+clj꞉tilda.booking꞉> 
+; No tests found. 😱, ns: 0, vars: 0
+clj꞉dev.booking-examples꞉> 

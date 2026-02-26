@@ -1,0 +1,1 @@
+["^ ","~:members",["^ ","getCurrentObservation",["~#set",[["^ ","~:flags",["^2",["~:method","~:public"]]]]],"getCurrentObservationScope",["^2",[["^ ","^3",["^2",["^4","^5"]]]]],"setCurrentObservationScope",["^2",[["^ ","^3",["^2",["^4","^5"]]]]],"observationConfig",["^2",[["^ ","^3",["^2",["^4","^5"]]]]],"isNoop",["^2",[["^ ","^3",["^2",["^4","^5"]]]]]]]

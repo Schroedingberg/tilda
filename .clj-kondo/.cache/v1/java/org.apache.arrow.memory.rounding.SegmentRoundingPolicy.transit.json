@@ -1,0 +1,1 @@
+["^ ","~:members",["^ ","MIN_SEGMENT_SIZE",["~#set",[["^ ","~:flags",["^2",["~:public","~:static","~:field","~:final"]]]]],"<init>",["^2",[["^ ","^3",["^2",["~:method","^4"]]]]],"getRoundedSize",["^2",[["^ ","^3",["^2",["^9","^4"]]]]],"getSegmentSize",["^2",[["^ ","^3",["^2",["^9","^4"]]]]],"getSegmentSizeAsLong",["^2",[["^ ","^3",["^2",["^9","^4"]]]]]]]

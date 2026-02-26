@@ -1,0 +1,1 @@
+["^ ","~$UnnestCursor",["^ ","~:row",29,"~:col",1,"~:name","^0","~:ns","~$xtdb.operator.unnest","~:top-ns","^5","~:class",true],"~$->UnnestCursor",["^ ","^1",29,"^2",1,"~:fixed-arities",["~#set",[5]],"^3","^8","^4","^5","^6","^5"],"~:filename","/home/aaron/.m2/repository/com/xtdb/xtdb-core/2.0.0-beta7/xtdb-core-2.0.0-beta7.jar:xtdb/operator/unnest.clj"]

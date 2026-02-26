@@ -1,0 +1,1 @@
+["^ ","~:members",["^ ","getInstance",["~#set",[["^ ","~:flags",["^2",["~:method","~:public","~:static","~:final"]]]]],"getEmptyInstance",["^2",[["^ ","^3",["^2",["^4","^5","^6","^7"]]]]],"suppressBreakAfter",["^2",[["^ ","^3",["^2",["^4","^5"]]]]],"unsuppressBreakAfter",["^2",[["^ ","^3",["^2",["^4","^5"]]]]],"wrapIteratorWithFilter",["^2",[["^ ","^3",["^2",["^4","^5"]]]]]]]

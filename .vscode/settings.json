@@ -1,0 +1,30 @@
+{
+    "calva.replConnectSequences": [
+        {
+            "name": "tilda",
+            "projectType": "deps.edn",
+            "cljsType": "none",
+            "menuSelections": {
+                "cljAliases": [
+                    "dev"
+                ]
+            },
+            "jackInEnv": {
+                "JAVA_OPTS": "--add-opens=java.base/java.nio=ALL-UNNAMED"
+            }
+        }
+    ],
+    "workbench.colorCustomizations": {
+        "activityBar.background": "#2E3007",
+        "titleBar.activeBackground": "#41430A",
+        "titleBar.activeForeground": "#FAFBE6",
+        "titleBar.inactiveBackground": "#393B09",
+        "titleBar.inactiveForeground": "#1A1B04",
+        "statusBar.background": "#4A4D0B",
+        "statusBar.foreground": "#FBFCE7",
+        "statusBar.debuggingBackground": "#4A4D0B",
+        "statusBar.debuggingForeground": "#FBFCE7",
+        "statusBar.noFolderBackground": "#4A4D0B",
+        "statusBar.noFolderForeground": "#FBFCE7"
+    }
+}
