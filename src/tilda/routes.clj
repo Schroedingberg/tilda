@@ -3,11 +3,13 @@
   (:require
    [cheshire.core :as json]
    [cheshire.generate :as json-gen]
+   [clojure.java.io :as io]
    [reitit.ring :as ring]
    [ring.util.response :as resp]
    [tilda.booking :as b]
-   [tilda.views :as views])
-  (:import [java.time Instant ZonedDateTime LocalDate LocalDateTime]
+   [tilda.views :as views]
+   [tilda.views.calendar :as cal])
+  (:import [java.time Instant ZonedDateTime LocalDate LocalDateTime YearMonth]
            [java.time.format DateTimeParseException]))
 
 ;; Register JSON encoders for Java time types
@@ -89,6 +91,42 @@
       (json-response (safe-query #(b/booking-history node id))))))
 
 ;; -----------------------------------------------------------------------------
+;; Calendar Handlers
+;; -----------------------------------------------------------------------------
+
+(defn parse-month
+  "Parse YYYY-MM to YearMonth, defaulting to current month."
+  [s]
+  (try
+    (if s (YearMonth/parse s) (YearMonth/now))
+    (catch Exception _ (YearMonth/now))))
+
+(defn calendar-page [node]
+  (fn [req]
+    (let [month (parse-month (get-in req [:query-params "month"]))
+          tenant (get-in req [:query-params "tenant"] "demo-user")
+          bookings (safe-query #(b/all-bookings node))
+          requests (safe-query #(b/pending-requests node))]
+      (html-response (cal/calendar-page month tenant bookings requests)))))
+
+(defn calendar-fragment [node]
+  (fn [req]
+    (let [month (parse-month (get-in req [:query-params "month"]))
+          tenant (get-in req [:query-params "tenant"] "demo-user")
+          bookings (safe-query #(b/all-bookings node))
+          requests (safe-query #(b/pending-requests node))]
+      (html-response (cal/calendar-fragment month tenant bookings requests)))))
+
+(defn calendar-events [_node]
+  (fn [_req]
+    ;; SSE endpoint - for now just keep connection open
+    {:status 200
+     :headers {"Content-Type" "text/event-stream"
+               "Cache-Control" "no-cache"
+               "Connection" "keep-alive"}
+     :body "event: connected\ndata: {}\n\n"}))
+
+;; -----------------------------------------------------------------------------
 ;; POST Handlers
 ;; -----------------------------------------------------------------------------
 
@@ -158,6 +196,11 @@
   (ring/router
    [["/" {:get (home node)}]
 
+    ["/calendar"
+     ["" {:get (calendar-page node)}]
+     ["/fragment" {:get (calendar-fragment node)}]
+     ["/events" {:get (calendar-events node)}]]
+
     ["/requests"
      ["" {:get (list-requests node)
           :post (create-request node)}]
@@ -169,7 +212,19 @@
               :delete (cancel-booking node)}]
      ["/:id/history" {:get (booking-history node)}]]]))
 
+(defn serve-static [req]
+  (let [path (subs (:uri req) 1)]
+    (when-let [resource (io/resource (str "public/" path))]
+      {:status 200
+       :headers {"Content-Type" (cond
+                                  (.endsWith path ".js") "application/javascript"
+                                  (.endsWith path ".css") "text/css"
+                                  :else "application/octet-stream")}
+       :body (slurp resource)})))
+
 (defn handler [node]
   (ring/ring-handler
    (router node)
-   (ring/create-default-handler)))
+   (ring/routes
+    serve-static
+    (ring/create-default-handler))))

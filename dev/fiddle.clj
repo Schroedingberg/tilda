@@ -117,10 +117,18 @@
 
   ;; Test deciders (pure functions - no node needed)
   (def sample-requests
-    [{:tenant-name "Flo" :requested-at (instant "2026-01-01T09:00:00Z") :priority 5}
-     {:tenant-name "Val" :requested-at (instant "2026-01-01T10:00:00Z") :priority 10}
-     {:tenant-name "Aaron" :requested-at (instant "2026-01-01T08:00:00Z") :priority 3}])
+    [{:tenant-name "Flo" :requested-at (instant "2026-01-01T09:00:00Z") :priority 5 :xt/id 123}
+     {:tenant-name "Val" :requested-at (instant "2026-01-01T10:00:00Z") :priority 10 :xt/id 124}
+     {:tenant-name "Aaron" :requested-at (instant "2026-01-01T08:00:00Z") :priority 3 :xt/id 125}])
 
+
+  (booking/decide-first-come-first-serve sample-requests) ;;=> Aaron
+
+  (booking/resolve-slot! @node sample-requests booking/decide-first-come-first-serve)
+
+
+  (booking/all-bookings @node)
+  ;;=> [{:request-id 125, :tenant-name "Aaron", :xt/id #uuid "a8c0e417-bfd0-4063-ae5a-c6e47b61d315"}]
   ;; Cleanup
   (stop!)
 

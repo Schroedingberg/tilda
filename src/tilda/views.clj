@@ -2,6 +2,9 @@
   "Hiccup templates + Datastar"
   (:require [hiccup2.core :as h]))
 
+
+
+
 (defn render [hiccup]
   (str "<!DOCTYPE html>" (h/html hiccup)))
 
