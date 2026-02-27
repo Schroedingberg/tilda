@@ -104,6 +104,13 @@ curl -X DELETE localhost:8080/bookings/{id}
 (stop!)        # Cleanup
 ```
 
+## Completed
+
+- [x] Continuous calendar grid with infinite scroll
+- [x] Cross-month drag selection
+- [x] Sticky headers (page title + weekday labels)
+- [x] Subtle month indicators on 1st of each month
+
 ## Not Yet Implemented
 
 - [ ] Auth (stub in `auth.clj`, ready for Oak integration)
@@ -112,6 +119,19 @@ curl -X DELETE localhost:8080/bookings/{id}
 - [ ] Deployment: Dockerfile for container builds
 - [ ] Deployment: Read PORT/STORAGE_DIR from env vars
 - [ ] Deployment: Add to [lab orchestrator](https://github.com/Schroedingberg/lab)
+
+## Code Metrics
+
+| File | Lines | Functions |
+|------|-------|-----------|
+| booking.clj | 173 | 16 |
+| routes.clj | 340 | 25 |
+| views/calendar.clj | 280 | 23 |
+| sse.clj | 191 | 9 |
+| core.clj | 115 | 7 |
+| views/layout.clj | 87 | 5 |
+| auth.clj | 57 | 2 |
+| **Total** | **1243** | **87** |
 
 ## Architecture Decisions
 
