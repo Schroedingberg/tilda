@@ -1,34 +1,25 @@
 (ns tilda.booking
   "Domain logic for the booking system.
    
-   ## Data Model
+   ## Data Model - Existence = State
    
-   Two-table design with clear separation:
+   Simple two-table design where document existence represents state:
    
-   ```
-   requests (pending)  ──resolve-slot!──>  bookings (confirmed)
-                            │
-                            └──> rejected requests updated
-   ```
+   - **Request exists** → pending (someone wants this slot)
+   - **Request deleted** → resolved (accepted or rejected)
+   - **Booking exists** → confirmed reservation
    
-   **Requests** - Expressions of interest for a time slot:
-   - Created via `create-request!` (idempotent per tenant+dates)
-   - Status: :pending → :booked | :rejected
-   - Attributes: tenant-name, start-date, end-date, priority
+   XTDB history preserves audit trail for deleted documents.
    
-   **Bookings** - Confirmed reservations:
-   - Created when resolving conflicting requests
-   - Status: :confirmed → :cancelled
-   - Linked to winning request via request-id
+   ## Resolution
    
-   ## Resolution Strategies
+   When multiple requests compete for a slot, `resolve-slot!`:
+   1. Picks winner via decider function
+   2. Creates booking for winner
+   3. Deletes all requests (history preserved)
    
-   When multiple requests compete for a slot, use `resolve-slot!` with
-   a decider function:
-   
-   - `decide-first-come-first-serve` - Earliest request wins
-   - `decide-by-priority` - Highest priority wins
-   - `decide-random-lottery` - Random selection
+   Deciders: `decide-first-come-first-serve`, `decide-by-priority`,
+   `decide-random-lottery`
    
    ## Idempotency
    
@@ -41,20 +32,32 @@
 ;; Requests - "I want this slot"
 ;; =============================================================================
 
-(defn find-existing-request
-  "Find an existing pending request for same tenant and exact date range."
+
+(defn find-overlapping-request
+  "Find a request that overlaps with a given time range."
   [node tenant-name start-date end-date]
   (first (xt/q node
-               '(-> (from :requests [xt/id tenant-name start-date end-date status])
+               '(-> (from :requests [xt/id tenant-name start-date end-date])
+                    (where (and (= tenant-name $tenant)
+                                (<= start-date $end)
+                                (>= end-date $start))))
+               {:args {:tenant tenant-name :start start-date :end end-date}})))
+
+(defn find-existing-request
+  "Find an existing request for same tenant and exact date range."
+  [node tenant-name start-date end-date]
+  (first (xt/q node
+               '(-> (from :requests [xt/id tenant-name start-date end-date])
                     (where (and (= tenant-name $tenant)
                                 (= start-date $start)
-                                (= end-date $end)
-                                (= status :pending))))
+                                (= end-date $end))))
                {:args {:tenant tenant-name :start start-date :end end-date}})))
+
+
 
 (defn create-request!
   "Submit a request for a time slot. Returns request-id.
-   Idempotent: returns existing request-id if same tenant+dates already pending."
+   Idempotent: returns existing request-id if same tenant+dates exist."
   [node {:keys [tenant-name start-date end-date priority]}]
   (if-let [existing (find-existing-request node tenant-name start-date end-date)]
     (:xt/id existing)
@@ -66,7 +69,6 @@
                         :start-date start-date
                         :end-date end-date
                         :priority (or priority 0)
-                        :status :pending
                         :requested-at (Instant/now)}]])
       request-id)))
 
@@ -74,22 +76,25 @@
   (first (xt/q node '(from :requests [{:xt/id $id} *]) {:args {:id request-id}})))
 
 (defn pending-requests
-  "All unresolved requests."
+  "All pending requests. Existence = pending, deletion = resolved."
   [node]
-  (xt/q node '(-> (from :requests [*]) (where (= status :pending)))))
+  (xt/q node '(from :requests [*])))
 
 (defn find-conflicting-requests
-  "Find pending requests that overlap with a time range."
+  "Find requests that overlap with a time range."
   [node start-date end-date]
   (xt/q node
         '(-> (from :requests [*])
-             (where (and (= status :pending)
-                         (<= start-date $end)
+             (where (and (<= start-date $end)
                          (>= end-date $start))))
         {:args {:start start-date :end end-date}}))
 
-(defn- update-request! [node request]
-  (xt/execute-tx node [[:put-docs :requests request]]))
+(defn request-history
+  "Audit trail for a request via XTDB time-travel."
+  [node request-id]
+  (xt/q node
+        '(from :requests {:bind [{:xt/id $id} *] :for-valid-time :all-time})
+        {:args {:id request-id}}))
 
 ;; =============================================================================
 ;; Bookings - "This slot is confirmed"
@@ -129,12 +134,13 @@
 
 (defn resolve-slot!
   "Resolve competing requests using a decider function.
-   Winner becomes a booking, losers are rejected. Returns {:booking-id ... :rejected [...]}."
+   Winner becomes a booking, all requests are deleted (history preserved).
+   Returns {:booking-id ... :rejected [...]}."
   [node requests decider-fn]
   (when-let [winner (decider-fn requests)]
     (let [booking-id (random-uuid)
           losers (remove #(= (:xt/id %) (:xt/id winner)) requests)]
-      ;; Single atomic transaction: create booking + update all request statuses
+      ;; Single atomic transaction: create booking + delete all requests
       (xt/execute-tx node
                      (concat
                       [[:put-docs :bookings
@@ -142,10 +148,9 @@
                          :request-id (:xt/id winner)
                          :tenant-name (:tenant-name winner)
                          :start-date (:start-date winner)
-                         :end-date (:end-date winner)}]
-                       [:put-docs :requests (assoc winner :status :accepted)]]
-                      (for [loser losers]
-                        [:put-docs :requests (assoc loser :status :rejected)])))
+                         :end-date (:end-date winner)}]]
+                      (for [req requests]
+                        [:delete-docs :requests (:xt/id req)])))
       {:booking-id booking-id
        :winner (:xt/id winner)
        :rejected (mapv :xt/id losers)})))

@@ -165,8 +165,7 @@
     (let [resp (http-get "/requests")]
       (is (= 200 (:status resp)))
       (is (= 1 (count (:json resp))))
-      (is (= "Bob" (:tenant-name (first (:json resp)))))
-      (is (= "pending" (name (:status (first (:json resp)))))))))
+      (is (= "Bob" (:tenant-name (first (:json resp))))))))
 
 ;; =============================================================================
 ;; Tests: POST /requests - Create Request
@@ -357,10 +356,9 @@
       (is (string? r1-id))
       (is (string? r2-id))
 
-      ;; Step 2: Verify both are pending
+      ;; Step 2: Verify both requests exist
       (let [requests (:json (http-get "/requests"))]
-        (is (= 2 (count requests)))
-        (is (every? #(= "pending" (name (:status %))) requests)))
+        (is (= 2 (count requests))))
 
       ;; Step 3: Resolve by priority - Paula should win
       (let [resolve-resp (resolve-requests! "2027-02-01T00:00:00Z" "2027-02-03T00:00:00Z" :decider "priority")

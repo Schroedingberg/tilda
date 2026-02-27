@@ -46,7 +46,6 @@
         req (b/get-request *node* req-id)]
     (is (uuid? req-id))
     (is (= "Flo" (:tenant-name req)))
-    (is (= :pending (:status req)))
     (is (= 0 (:priority req)))))
 
 (deftest find-conflicting-requests-test
@@ -79,9 +78,12 @@
     ;; Booking created
     (let [booking (b/get-booking *node* (:booking-id result))]
       (is (= "Val" (:tenant-name booking))))
-    ;; Request statuses updated
-    (is (= :accepted (:status (b/get-request *node* r2))))
-    (is (= :rejected (:status (b/get-request *node* r1))))))
+    ;; Requests are deleted after resolution (not updated)
+    (is (nil? (b/get-request *node* r1)))
+    (is (nil? (b/get-request *node* r2)))
+    ;; But history preserves them
+    (is (seq (b/request-history *node* r1)))
+    (is (seq (b/request-history *node* r2)))))
 
 ;; =============================================================================
 ;; Booking Tests
