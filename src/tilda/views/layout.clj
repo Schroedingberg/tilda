@@ -1,9 +1,26 @@
-(ns tilda.views
-  "Hiccup templates + Datastar"
+(ns tilda.views.layout
+  "Base Hiccup templates and shared components.
+   
+   ## Overview
+   
+   This namespace provides the foundation for HTML rendering:
+   - `render` - Converts Hiccup to HTML string with DOCTYPE
+   - `layout` - Standard page layout with Datastar script
+   - Row components for tables (booking-row, request-row)
+   
+   ## Usage
+   
+   Use `render` to convert Hiccup to HTML:
+     (layout/render [:div \"Hello\"])
+   
+   Wrap in layout for full page:
+     (layout/render (layout/layout [:h1 \"Title\"]))
+   
+   ## Datastar Integration
+   
+   The layout includes the Datastar CDN script for server-driven reactivity.
+   Components can use Datastar attributes like data-on-click for actions."
   (:require [hiccup2.core :as h]))
-
-
-
 
 (defn render [hiccup]
   (str "<!DOCTYPE html>" (h/html hiccup)))
