@@ -22,6 +22,9 @@
    | GET    | /bookings/:id       | Get single booking             |
    | DELETE | /bookings/:id       | Cancel a booking               |
    | GET    | /bookings/:id/history | Booking version history      |
+   | GET    | /admin              | Admin conflict resolution UI |
+   | GET    | /admin/conflicts    | Conflicts fragment (SSE)     |
+   | POST   | /admin/resolve      | Resolve with winner/decider  |
    
    ## Live Updates
    
@@ -43,7 +46,8 @@
    [tilda.booking :as b]
    [tilda.sse :as sse]
    [tilda.views.layout :as views]
-   [tilda.views.calendar :as cal])
+   [tilda.views.calendar :as cal]
+   [tilda.views.admin :as admin])
   (:import [java.time Instant ZonedDateTime LocalDate LocalDateTime YearMonth]
            [java.time.format DateTimeParseException]))
 
@@ -285,6 +289,66 @@
         (error-response 400 "Invalid JSON body")))))
 
 ;; =============================================================================
+;; Admin Handlers
+;; =============================================================================
+
+(defn admin-page
+  "GET /admin - Admin page showing conflicts that need resolution."
+  [node]
+  (fn [_req]
+    (let [requests (safe-query #(b/pending-requests node))]
+      (html-response (admin/admin-page requests)))))
+
+(defn admin-conflicts-fragment
+  "GET /admin/conflicts - SSE fragment for conflicts list."
+  [node]
+  (fn [_req]
+    (let [requests (safe-query #(b/pending-requests node))]
+      (html-response (admin/conflicts-fragment requests)))))
+
+(defn admin-resolve
+  "POST /admin/resolve - Resolve with specific winner or decider.
+   Body: {winner: uuid} OR {decider: fcfs|lottery, start: ..., end: ...}"
+  [node]
+  (fn [req]
+    (let [body (parse-body req)]
+      (cond
+        ;; Pick specific winner
+        (:winner body)
+        (if-let [winner-id (parse-uuid (:winner body))]
+          (let [start (parse-instant (:start body))
+                end (parse-instant (:end body))
+                conflicts (safe-query #(b/find-conflicting-requests node start end))
+                winner (first (filter #(= (:xt/id %) winner-id) conflicts))]
+            (if winner
+              (let [result (b/resolve-slot! node conflicts (constantly winner))]
+                (broadcast-calendar-update! node start end)
+                (json-response {:success true
+                                :booking-id (str (:booking-id result))
+                                :winner (str winner-id)}))
+              (error-response 404 "Winner not found in conflicts")))
+          (error-response 400 "Invalid winner UUID"))
+        
+        ;; Use decider
+        (:decider body)
+        (let [start (parse-instant (:start body))
+              end (parse-instant (:end body))
+              decider-fn (get deciders (:decider body))]
+          (if decider-fn
+            (let [conflicts (safe-query #(b/find-conflicting-requests node start end))]
+              (if (empty? conflicts)
+                (error-response 404 "No conflicts found")
+                (let [result (b/resolve-slot! node conflicts decider-fn)]
+                  (broadcast-calendar-update! node start end)
+                  (json-response {:success true
+                                  :booking-id (str (:booking-id result))
+                                  :winner (str (:winner result))}))))
+            (error-response 400 (str "Invalid decider. Use: " (keys deciders)))))
+        
+        :else
+        (error-response 400 "Provide 'winner' or 'decider' in body")))))
+
+;; =============================================================================
 ;; Router
 ;; =============================================================================
 
@@ -307,7 +371,12 @@
      ["" {:get (list-bookings node)}]
      ["/:id" {:get (get-booking node)
               :delete (cancel-booking node)}]
-     ["/:id/history" {:get (booking-history node)}]]]
+     ["/:id/history" {:get (booking-history node)}]]
+
+    ["/admin"
+     ["" {:get (admin-page node)}]
+     ["/conflicts" {:get (admin-conflicts-fragment node)}]
+     ["/resolve" {:post (admin-resolve node)}]]]
    {:conflicts nil}))
 
 (defn serve-static [req]

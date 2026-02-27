@@ -110,7 +110,8 @@ curl -X DELETE localhost:8080/bookings/{id}
 - [x] Cross-month drag selection
 - [x] Sticky headers (page title + weekday labels)
 - [x] Subtle month indicators on 1st of each month
-- [x] Swappable auth (dev / Cloudflare Access / magic links)
+- [x] Swappable auth (dev / Cloudflare / magic links / header-based)
+- [x] Admin UI for conflict resolution (`/admin`)
 
 ## Authentication
 
@@ -133,8 +134,12 @@ Magic link users bookmark `https://car.example.com/u/alice-xK9mP2` - cookie pers
 
 ## Not Yet Implemented
 
-- [ ] Admin UI for resolving conflicts (API works, no UI)
-- [ ] Request extension (drag to extend existing request)
+**Your TODOs (business logic):**
+- [ ] Conflict resolution decider logic (which request wins?)
+- [ ] Request extension rules (can users extend? constraints?)
+
+**Web plumbing (done for you):**
+- [x] Admin UI for viewing/resolving conflicts
 - [ ] Dockerfile for container builds
 - [ ] Read PORT/STORAGE_DIR from env vars
 

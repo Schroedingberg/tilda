@@ -220,9 +220,13 @@
   "Page header with resource name and tenant info."
   [tenant-name resource-name]
   [:header {:style "margin-bottom: 1.5rem;"}
-   [:hgroup
-    [:h1 (or resource-name "Booking Calendar")]
-    [:p "Drag to select dates for your booking request"]]
+   [:div {:style "display: flex; justify-content: space-between; align-items: flex-start;"}
+    [:hgroup
+     [:h1 (or resource-name "Booking Calendar")]
+     [:p "Drag to select dates for your booking request"]]
+    [:a {:href "/admin" 
+         :style "font-size: 0.875rem; text-decoration: none; color: #666; padding: 0.5rem;"} 
+     "Admin"]]
    [:small {:style "display: inline-flex; align-items: center; gap: 0.5rem;"}
     [:span {:style (str "width: 12px; height: 12px; border-radius: 50%; background:" (tenant-color tenant-name))}]
     (str "Booking as " tenant-name)]])
