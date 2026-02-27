@@ -1,9 +1,15 @@
-(ns dev.fiddle
-  (:require
-   [xtdb.api :as xt]
-   [xtdb.node :as xtn]))
+(ns dev.design-notes
+  "HISTORICAL DESIGN NOTES (Feb 2026)
+   
+   This file captures original design thinking during initial development.
+   Some ideas were implemented, others evolved differently. Read as context,
+   not as current source of truth.
+   
+   For current state: see README.md and .copilot-instructions.md")
 
-
+;; -----------------------------------------------------------------------------
+;; ORIGINAL NOTES BELOW - may reflect outdated ideas
+;; -----------------------------------------------------------------------------
 
 ;; I guess if i want to book the car for a certain time, the system needs to know:
 ;; - Who is booking (tenant)
@@ -135,8 +141,7 @@
   ;; We could already try to reduce over txs here to get the state.
   ;; Is this too complex?
   ;; Or is it really simple?
-  txs
-  )
+  txs)
 
 
 (comment
