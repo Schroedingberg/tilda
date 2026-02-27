@@ -20,7 +20,10 @@
         dev.data-star.clojure/sdk {:mvn/version "1.0.0-RC8"}
         dev.data-star.clojure/ring {:mvn/version "1.0.0-RC8"}
         dev.data-star.clojure/malli-schemas {:mvn/version "1.0.0-RC8"}
-        dev.data-star.clojure/ring-malli-schemas {:mvn/version "1.0.0-RC8"}}
+        dev.data-star.clojure/ring-malli-schemas {:mvn/version "1.0.0-RC8"}
+
+        ;; Logging
+        com.brunobonacci/mulog {:mvn/version "0.9.0"}}
 
  :aliases {:run {:main-opts ["-m" "tilda.core"]
                  :jvm-opts ["--add-opens=java.base/java.nio=ALL-UNNAMED"]}

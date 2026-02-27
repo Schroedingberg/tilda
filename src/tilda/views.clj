@@ -20,7 +20,7 @@
     [:title "Tilda - Booking"]
     ;; Datastar - server-driven reactivity
     [:script {:type "module"
-              :src "https://cdn.jsdelivr.net/npm/@starfederation/datastar@1.0.0-beta.11/bundles/datastar.js"}]
+              :src "https://cdn.jsdelivr.net/gh/starfederation/datastar@1.0.0-RC.7/bundles/datastar.js"}]
     [:style (str "body { font-family: system-ui; max-width: 800px; margin: 2rem auto; padding: 0 1rem; }"
                  "table { width: 100%; border-collapse: collapse; }"
                  "th, td { padding: 0.5rem; text-align: left; border-bottom: 1px solid #ddd; }"

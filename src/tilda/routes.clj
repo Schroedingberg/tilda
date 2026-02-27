@@ -4,10 +4,13 @@
    [cheshire.core :as json]
    [cheshire.generate :as json-gen]
    [clojure.java.io :as io]
+   [com.brunobonacci.mulog :as mu]
    [reitit.ring :as ring]
    [ring.middleware.params :refer [wrap-params]]
    [ring.middleware.keyword-params :refer [wrap-keyword-params]]
    [ring.util.response :as resp]
+   [starfederation.datastar.clojure.api :as d*]
+   [starfederation.datastar.clojure.adapter.ring :as d*ring]
    [tilda.booking :as b]
    [tilda.views :as views]
    [tilda.views.calendar :as cal])
@@ -111,13 +114,17 @@
           requests (safe-query #(b/pending-requests node))]
       (html-response (cal/calendar-page month tenant bookings requests)))))
 
-(defn calendar-fragment [node]
+(defn month-fragment [node]
   (fn [req]
-    (let [month (parse-month (get-in req [:params :month]))
-          tenant (get-in req [:params :tenant] "demo-user")
+    (let [month (parse-month (get-in req [:path-params :month]))
           bookings (safe-query #(b/all-bookings node))
-          requests (safe-query #(b/pending-requests node))]
-      (html-response (cal/calendar-fragment month tenant bookings requests)))))
+          requests (safe-query #(b/pending-requests node))
+          html (views/render (cal/month-fragment month bookings requests))]
+      (d*ring/->sse-response req
+                             {d*ring/on-open
+                              (fn [sse]
+                                (d*/patch-elements! sse html)
+                                (d*/close-sse! sse))}))))
 
 (defn calendar-events [_node]
   (fn [_req]
@@ -200,7 +207,7 @@
 
     ["/calendar"
      ["" {:get (calendar-page node)}]
-     ["/fragment" {:get (calendar-fragment node)}]
+     ["/month/:month" {:get (month-fragment node)}]
      ["/events" {:get (calendar-events node)}]]
 
     ["/requests"
@@ -224,6 +231,20 @@
                                   :else "application/octet-stream")}
        :body (slurp resource)})))
 
+(defn wrap-log
+  "Ring middleware that logs each request/response via mulog."
+  [handler]
+  (fn [req]
+    (let [start  (System/currentTimeMillis)
+          resp   (handler req)
+          ms     (- (System/currentTimeMillis) start)]
+      (mu/log ::http-request
+              :method (:request-method req)
+              :uri    (:uri req)
+              :status (:status resp)
+              :ms     ms)
+      resp)))
+
 (defn handler [node]
   (-> (ring/ring-handler
        (router node)
@@ -231,4 +252,5 @@
         serve-static
         (ring/create-default-handler)))
       wrap-keyword-params
-      wrap-params))
+      wrap-params
+      wrap-log))

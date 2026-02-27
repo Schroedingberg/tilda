@@ -1,6 +1,8 @@
 (ns tilda.views.calendar
-  "Calendar UI components - month grid with drag selection"
-  (:import [java.time LocalDate YearMonth ZoneId Instant]))
+  "Calendar UI components - continuous scrolling calendar with lazy load"
+  (:import [java.time LocalDate YearMonth ZoneId Instant]
+           [java.time.format TextStyle]
+           [java.util Locale]))
 
 ;; =============================================================================
 ;; Date Helpers
@@ -74,9 +76,13 @@
 
 (def calendar-css
   "
-  .calendar { user-select: none; }
-  .calendar-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-  .calendar-nav button { padding: 0.5rem 1rem; }
+  .calendar { user-select: none; max-width: 900px; margin: 0 auto; }
+  .month-section { margin-bottom: 2rem; }
+  .month-header { 
+    font-size: 1.5rem; font-weight: bold; padding: 1rem 0; 
+    position: sticky; top: 0; background: white; z-index: 10;
+    border-bottom: 2px solid #e5e7eb;
+  }
   .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
   .calendar-header { padding: 0.5rem; text-align: center; font-weight: bold; background: #f3f4f6; }
   .day { 
@@ -94,6 +100,8 @@
   .indicator.pending { opacity: 0.5; }
   .selecting { background: #3b82f6 !important; color: white; }
   .selecting .day-num { color: white; }
+  .load-sentinel { height: 100px; display: flex; align-items: center; justify-content: center; }
+  .loading-spinner { color: #6b7280; }
   @keyframes pulse { 
     0%, 100% { box-shadow: 0 0 0 0 rgba(59,130,246,0.4); }
     50% { box-shadow: 0 0 0 4px rgba(59,130,246,0); }
@@ -134,17 +142,11 @@
   (let [days ["Mon" "Tue" "Wed" "Thu" "Fri" "Sat" "Sun"]]
     (map #(vector :div.calendar-header %) days)))
 
-(defn calendar-nav
-  "Month navigation buttons."
+(defn month-header
+  "Month title with sticky positioning."
   [^YearMonth ym]
-  (let [prev (.minusMonths ym 1)
-        next (.plusMonths ym 1)
-        fmt (.getMonth ym)]
-    [:div.calendar-nav
-     [:button {:data-on-click (str "$$get('/calendar?month=" prev "')")} "← Prev"]
-     [:span {:style "font-size:1.25rem; font-weight:bold"}
-      (str fmt " " (.getYear ym))]
-     [:button {:data-on-click (str "$$get('/calendar?month=" next "')")} "Next →"]]))
+  (let [month-name (.getDisplayName (.getMonth ym) TextStyle/FULL (Locale/getDefault))]
+    [:div.month-header (str month-name " " (.getYear ym))]))
 
 (defn calendar-grid
   "The month grid with all days."
@@ -158,32 +160,64 @@
                         day week]
                     (day-cell day today bookings requests))))))
 
+(defn month-section
+  "A single month section with header and grid."
+  [^YearMonth ym bookings requests]
+  [:div.month-section {:id (str "month-" ym)}
+   (month-header ym)
+   (calendar-grid ym bookings requests)])
+
+(defn load-sentinel
+  "Sentinel div that triggers loading more months when visible."
+  [^YearMonth next-month]
+  [:div.load-sentinel {:id (str "load-" next-month)
+                       :data-on-intersect__once (str "@get('/calendar/month/" next-month "')")}
+   [:span.loading-spinner "Loading more..."]])
+
 ;; =============================================================================
 ;; Calendar Page
 ;; =============================================================================
 
-(defn calendar-fragment
-  "Just the calendar div (for SSE updates)."
-  [^YearMonth ym tenant-name bookings requests]
-  [:div#calendar-container {:data-calendar true
-                            :data-tenant tenant-name
-                            :data-on-load "$$get('/calendar/events')"}
-   (calendar-nav ym)
-   (calendar-grid ym bookings requests)])
+(defn- initial-months
+  "Generate a sequence of YearMonths starting from given month."
+  [^YearMonth start n]
+  (take n (iterate #(.plusMonths % 1) start)))
+
+(defn calendar-container
+  "Main calendar container with initial months and lazy load sentinel."
+  [^YearMonth start-month tenant-name bookings requests]
+  (let [months (initial-months start-month 3)
+        next-month (.plusMonths (last months) 1)]
+    [:div#calendar-container.calendar {:data-calendar true
+                                       :data-tenant tenant-name}
+     (for [ym months]
+       (month-section ym bookings requests))
+     (load-sentinel next-month)]))
+
+(defn month-fragment
+  "Single month fragment for lazy loading - replaces the load sentinel.
+   Loads 3 months at a time to push sentinel below fold."
+  [^YearMonth ym bookings requests]
+  (let [months (take 3 (iterate #(.plusMonths % 1) ym))
+        next-month (.plusMonths ym 3)]
+    [:div {:id (str "load-" ym)}
+     (for [m months]
+       (month-section m bookings requests))
+     (load-sentinel next-month)]))
 
 (defn calendar-page
   "Full calendar page with layout."
-  [^YearMonth ym tenant-name bookings requests]
+  [^YearMonth start-month tenant-name bookings requests]
   [:html
    [:head
     [:meta {:charset "utf-8"}]
     [:meta {:name "viewport" :content "width=device-width, initial-scale=1"}]
     [:title "Tilda - Calendar"]
     [:script {:type "module"
-              :src "https://cdn.jsdelivr.net/npm/@starfederation/datastar@1.0.0-beta.11/bundles/datastar.js"}]
+              :src "https://cdn.jsdelivr.net/gh/starfederation/datastar@1.0.0-RC.7/bundles/datastar.js"}]
     [:style calendar-css]]
    [:body
     [:h1 "Booking Calendar"]
     [:p "Drag to select dates for your booking request."]
-    (calendar-fragment ym tenant-name bookings requests)
+    (calendar-container start-month tenant-name bookings requests)
     [:script {:src "/js/calendar.js" :defer true}]]])
