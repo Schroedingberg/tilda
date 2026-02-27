@@ -70,6 +70,14 @@
 (defn- find-requests-for-day [day requests]
   (filter #(day-in-range? day %) requests))
 
+(defn- days-in-range
+  "Generate sequence of LocalDates from start to end (inclusive)."
+  [^Instant start ^Instant end]
+  (let [start-day (to-local-date start)
+        end-day (to-local-date end)]
+    (take-while #(not (.isAfter % end-day))
+                (iterate #(.plusDays % 1) start-day))))
+
 ;; =============================================================================
 ;; CSS
 ;; =============================================================================
@@ -129,7 +137,8 @@
           day-requests (find-requests-for-day day requests)
           past? (.isBefore day today)
           today? (.equals day today)]
-      [:div.day {:data-day (str day)
+      [:div.day {:id (str "day-" day)
+                 :data-day (str day)
                  :class (cond past? "past" today? "today")}
        [:div.day-num (.getDayOfMonth day)]
        (into [:div.day-indicators]
@@ -189,7 +198,8 @@
   (let [months (initial-months start-month 3)
         next-month (.plusMonths (last months) 1)]
     [:div#calendar-container.calendar {:data-calendar true
-                                       :data-tenant tenant-name}
+                                       :data-tenant tenant-name
+                                       :data-on-load "@get('/calendar/events')"}
      (for [ym months]
        (month-section ym bookings requests))
      (load-sentinel next-month)]))
@@ -221,3 +231,15 @@
     [:p "Drag to select dates for your booking request."]
     (calendar-container start-month tenant-name bookings requests)
     [:script {:src "/js/calendar.js" :defer true}]]])
+
+;; =============================================================================
+;; SSE Updates
+;; =============================================================================
+
+(defn day-cells-for-range
+  "Generate hiccup for day cells in a date range (for SSE broadcast)."
+  [^Instant start ^Instant end bookings requests]
+  (let [today (LocalDate/now)
+        days (days-in-range start end)]
+    (for [day days]
+      (day-cell day today bookings requests))))

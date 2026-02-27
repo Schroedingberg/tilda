@@ -17,6 +17,30 @@
   (:import [java.time Instant ZonedDateTime LocalDate LocalDateTime YearMonth]
            [java.time.format DateTimeParseException]))
 
+;; =============================================================================
+;; SSE Pub/Sub for live updates
+;; =============================================================================
+
+(defonce ^:private sse-clients (atom #{}))
+
+(defn- register-sse! [sse]
+  (swap! sse-clients conj sse)
+  (mu/log ::sse-connected :clients (count @sse-clients)))
+
+(defn- unregister-sse! [sse]
+  (swap! sse-clients disj sse)
+  (mu/log ::sse-disconnected :clients (count @sse-clients)))
+
+(defn broadcast!
+  "Send HTML fragment to all connected SSE clients."
+  [html]
+  (doseq [sse @sse-clients]
+    (try
+      (d*/patch-elements! sse html)
+      (catch Exception e
+        (mu/log ::broadcast-error :error (.getMessage e))
+        (unregister-sse! sse)))))
+
 ;; Register JSON encoders for Java time types
 (json-gen/add-encoder Instant (fn [v jg] (.writeString jg (str v))))
 (json-gen/add-encoder ZonedDateTime (fn [v jg] (.writeString jg (str (.toInstant v)))))
@@ -87,8 +111,17 @@
 (defn cancel-booking [node]
   (fn [req]
     (let [id (parse-uuid (get-in req [:path-params :id]))]
-      (b/cancel-booking! node id)
-      (resp/status 204))))
+      (if-let [{:keys [start-date end-date]} (b/get-booking node id)]
+        (do
+          (b/cancel-booking! node id)
+          ;; Broadcast updated day cells
+          (let [bookings (safe-query #(b/all-bookings node))
+                requests (safe-query #(b/pending-requests node))
+                day-cells (cal/day-cells-for-range start-date end-date bookings requests)
+                html (apply str (map views/render day-cells))]
+            (broadcast! html))
+          (resp/status 204))
+        (resp/not-found "Booking not found")))))
 
 (defn booking-history [node]
   (fn [req]
@@ -127,13 +160,16 @@
                                 (d*/close-sse! sse))}))))
 
 (defn calendar-events [_node]
-  (fn [_req]
-    ;; SSE endpoint - for now just keep connection open
-    {:status 200
-     :headers {"Content-Type" "text/event-stream"
-               "Cache-Control" "no-cache"
-               "Connection" "keep-alive"}
-     :body "event: connected\ndata: {}\n\n"}))
+  (fn [req]
+    (d*ring/->sse-response req
+      {d*ring/on-open
+       (fn [sse]
+         (register-sse! sse)
+         ;; Send initial keepalive - connection stays open
+         (d*/execute-script! sse "console.log('SSE connected')"))
+       d*ring/on-close
+       (fn [sse]
+         (unregister-sse! sse))})))
 
 ;; -----------------------------------------------------------------------------
 ;; POST Handlers
@@ -165,7 +201,13 @@
             (let [request-id (b/create-request! node {:tenant-name tenant-name
                                                       :start-date  start
                                                       :end-date    end
-                                                      :priority    (or priority 0)})]
+                                                      :priority    (or priority 0)})
+                  ;; Broadcast updated day cells to all connected clients
+                  bookings (safe-query #(b/all-bookings node))
+                  requests (safe-query #(b/pending-requests node))
+                  day-cells (cal/day-cells-for-range start end bookings requests)
+                  html (apply str (map views/render day-cells))]
+              (broadcast! html)
               (-> (json-response {:request-id (str request-id)})
                   (resp/status 201)))))
         (error-response 400 "Invalid JSON body")))))
@@ -191,7 +233,13 @@
             (let [conflicts (safe-query #(b/find-conflicting-requests node start end))]
               (if (empty? conflicts)
                 (error-response 404 "No pending requests found for this slot")
-                (let [result (b/resolve-slot! node conflicts decider-fn)]
+                (let [result (b/resolve-slot! node conflicts decider-fn)
+                      ;; Broadcast updated day cells
+                      bookings (safe-query #(b/all-bookings node))
+                      requests (safe-query #(b/pending-requests node))
+                      day-cells (cal/day-cells-for-range start end bookings requests)
+                      html (apply str (map views/render day-cells))]
+                  (broadcast! html)
                   (json-response {:booking-id (str (:booking-id result))
                                   :winner     (str (:winner result))
                                   :rejected   (mapv str (:rejected result))}))))))
