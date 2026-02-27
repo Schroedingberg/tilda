@@ -127,12 +127,38 @@
   (def one-tenant-multiple-requests
     [{:tenant-name "Val" :requested-at (instant "2026-01-01T09:00:00Z")
       :start-date (instant "2026-01-01T09:00:00Z")
-      :end-date (instant "2026-01-03T10:00:00Z")
+      :end-date (instant "2026-01-04T10:00:00Z")
       :priority 5 :xt/id 123}
      {:tenant-name "Val" :requested-at (instant "2026-01-01T10:00:00Z")
       :start-date (instant "2026-01-03T10:00:00Z")
       :end-date (instant "2026-01-03T11:00:00Z")
       :priority 10 :xt/id 124}])
+
+
+
+
+  (let [[existing-request new-request] one-tenant-multiple-requests]
+    (and
+     (.isAfter (:start-date new-request) (:start-date existing-request))
+     (.isBefore (:end-date new-request) (:end-date existing-request))))
+
+
+
+  (def one-tenant-tries-extend-request
+    [{:tenant-name "Val" :requested-at (instant "2026-01-01T09:00:00Z")
+      :start-date (instant "2026-01-01T09:00:00Z")
+      :end-date (instant "2026-01-04T10:00:00Z")
+      :priority 5 :xt/id 123}
+     {:tenant-name "Val" :requested-at (instant "2026-01-01T10:00:00Z")
+      :start-date (instant "2026-01-03T09:00:00Z")
+      :end-date (instant "2026-01-05T10:00:00Z")
+      :priority 10 :xt/id 124}])
+
+  (let [[existing-request new-request] one-tenant-tries-extend-request
+        extends? (and
+                  (.isAfter (:start-date new-request) (:start-date existing-request))
+                  (.isAfter (:end-date new-request) (:end-date existing-request)))])
+
 
 
   (booking/all-bookings @node)

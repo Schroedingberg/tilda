@@ -34,7 +34,10 @@
 
 
 (defn find-overlapping-request
-  "Find a request that overlaps with a given time range."
+  "Find a request that overlaps with a given time range, for a given tenant.
+   Used to enforce idempotency: if the same tenant tries to book the same slot,
+   or a part of it,
+   we return the existing request instead of creating a new one."
   [node tenant-name start-date end-date]
   (first (xt/q node
                '(-> (from :requests [xt/id tenant-name start-date end-date])
@@ -43,24 +46,14 @@
                                 (>= end-date $start))))
                {:args {:tenant tenant-name :start start-date :end end-date}})))
 
-(defn find-existing-request
-  "Find an existing request for same tenant and exact date range."
-  [node tenant-name start-date end-date]
-  (first (xt/q node
-               '(-> (from :requests [xt/id tenant-name start-date end-date])
-                    (where (and (= tenant-name $tenant)
-                                (= start-date $start)
-                                (= end-date $end))))
-               {:args {:tenant tenant-name :start start-date :end end-date}})))
-
 
 
 (defn create-request!
   "Submit a request for a time slot. Returns request-id.
-   Idempotent: returns existing request-id if same tenant+dates exist."
+   Idempotent: returns existing request-id if tenant already has overlapping request."
   [node {:keys [tenant-name start-date end-date priority]}]
-  (if-let [existing (find-existing-request node tenant-name start-date end-date)]
-    (:xt/id existing)
+  (if-let [overlapping (find-overlapping-request node tenant-name start-date end-date)]
+    (:xt/id overlapping)
     (let [request-id (random-uuid)]
       (xt/execute-tx node
                      [[:put-docs :requests
@@ -80,14 +73,18 @@
   [node]
   (xt/q node '(from :requests [*])))
 
+
 (defn find-conflicting-requests
-  "Find requests that overlap with a time range."
+  "Find requests that overlap with a time range, to find competitors for resolution.
+   
+   This queries over ALL tenants."
   [node start-date end-date]
   (xt/q node
         '(-> (from :requests [*])
              (where (and (<= start-date $end)
                          (>= end-date $start))))
         {:args {:start start-date :end end-date}}))
+
 
 (defn request-history
   "Audit trail for a request via XTDB time-travel."
