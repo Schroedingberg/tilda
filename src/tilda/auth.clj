@@ -1,57 +1,96 @@
 (ns tilda.auth
-  "Authentication middleware - stub implementation.
+  "Swappable authentication middleware.
    
-   Currently returns a hardcoded user for development.
+   Strategies configured via :auth in config.edn:
    
-   ## Swapping for Oak Auth
+   {:auth {:strategy :dev}}              ; Stub user, no auth
+   {:auth {:strategy :cloudflare}}       ; Cloudflare Access headers
+   {:auth {:strategy :magic-link         ; Personal URL tokens
+           :users {\"alice-xK9mP2\" {:name \"Alice\" :email \"alice@example.com\"}
+                   \"bob-qR7nL4\"   {:name \"Bob\"   :email \"bob@example.com\"}}}}
    
-   To integrate with Oak (or another auth provider):
-   
-   1. Replace `stub-user` with a lookup function that validates tokens
-   2. Update `extract-user` to parse the Authorization header:
-      - Bearer tokens: (re-find #\"Bearer (.+)\" auth-header)
-      - Session cookies: check ring session middleware
-   3. Handle auth failures by returning 401 instead of using stub user
-   
-   Example Oak integration:
-   
-   ```clojure
-   (defn extract-user [request]
-     (when-let [token (-> request
-                          (get-in [:headers \"authorization\"])
-                          (some-> (str/replace #\"Bearer \" \"\")))]
-       (oak/verify-token token)))  ; Returns user map or nil
-   ```")
+   Magic links: share /u/alice-xK9mP2 → sets cookie → calendar access")
 
 ;; =============================================================================
-;; Stub User (replace with real auth)
+;; Auth Strategies
 ;; =============================================================================
 
 (def stub-user
-  "Hardcoded dev user. Replace with real auth lookup."
   {:id    #uuid "00000000-0000-0000-0000-000000000001"
    :email "dev@tilda.local"
    :name  "Dev User"
    :roles #{:user}})
 
+(defmulti extract-user
+  "Extract user from request based on auth strategy."
+  (fn [config _request] (:strategy config)))
+
+(defmethod extract-user :dev
+  [_ _request]
+  stub-user)
+
+(defmethod extract-user :cloudflare
+  [_ request]
+  (when-let [email (get-in request [:headers "cf-access-authenticated-user-email"])]
+    {:id    (java.util.UUID/nameUUIDFromBytes (.getBytes email))
+     :email email
+     :name  (first (clojure.string/split email #"@"))
+     :roles #{:user}}))
+
+(defmethod extract-user :magic-link
+  [{:keys [users]} request]
+  ;; Check cookie first, then URL token
+  (let [token (or (get-in request [:cookies "tilda-token" :value])
+                  (get-in request [:path-params :token]))]
+    (when-let [user-data (get users token)]
+      (assoc user-data
+             :id    (java.util.UUID/nameUUIDFromBytes (.getBytes (str token)))
+             :token token
+             :roles #{:user}))))
+
+(defmethod extract-user :default
+  [_ _]
+  nil)
+
 ;; =============================================================================
 ;; Middleware
 ;; =============================================================================
 
-(defn extract-user
-  "Extract user from request. Currently returns stub user.
-   
-   TODO: Check Authorization header or session for real auth."
-  [_request]
-  ;; Future: parse header, validate token, return user or nil
-  stub-user)
-
 (defn wrap-auth
-  "Ring middleware that adds :user to the request map.
+  "Ring middleware that adds :user to request.
    
-   The user is extracted via `extract-user`. If no user is found,
-   the stub user is used (for dev). In production, return 401 instead."
-  [handler]
+   Options:
+   - :strategy - :dev, :cloudflare, or :magic-link
+   - :users    - map of token->user for magic-link strategy
+   - :public   - set of paths that don't require auth (e.g. #{\"/_/health\"})"
+  [handler {:keys [strategy public] :or {strategy :dev public #{}} :as config}]
   (fn [request]
-    (let [user (extract-user request)]
-      (handler (assoc request :user user)))))
+    (let [path (:uri request)
+          user (extract-user (assoc config :strategy strategy) request)]
+      (cond
+        ;; Public paths - no auth needed
+        (contains? public path)
+        (handler request)
+        
+        ;; Magic link login - set cookie and redirect
+        (and (= strategy :magic-link)
+             (clojure.string/starts-with? path "/u/"))
+        (let [token (subs path 3)]
+          (if (extract-user (assoc config :strategy strategy) 
+                           (assoc-in request [:path-params :token] token))
+            {:status  303
+             :headers {"Location" "/calendar"
+                       "Set-Cookie" (str "tilda-token=" token 
+                                        "; Path=/; HttpOnly; SameSite=Lax; Max-Age=31536000")}
+             :body    ""}
+            {:status 403 :body "Invalid link"}))
+        
+        ;; Authenticated - proceed
+        user
+        (handler (assoc request :user user))
+        
+        ;; Unauthenticated
+        :else
+        {:status 401
+         :headers {"Content-Type" "text/plain"}
+         :body "Authentication required"}))))

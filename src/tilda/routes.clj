@@ -35,9 +35,11 @@
    [com.brunobonacci.mulog :as mu]
    [org.httpkit.server :as http-kit]
    [reitit.ring :as ring]
+   [ring.middleware.cookies :refer [wrap-cookies]]
    [ring.middleware.params :refer [wrap-params]]
    [ring.middleware.keyword-params :refer [wrap-keyword-params]]
    [ring.util.response :as resp]
+   [tilda.auth :as auth]
    [tilda.booking :as b]
    [tilda.sse :as sse]
    [tilda.views.layout :as views]
@@ -330,11 +332,15 @@
   "Create Ring handler with XTDB node and optional config."
   ([node] (handler node {}))
   ([node config]
-   (-> (ring/ring-handler
-        (router node config)
-        (ring/routes
-         serve-static
-         (ring/create-default-handler)))
-       wrap-keyword-params
-       wrap-params
-       wrap-log)))
+   (let [auth-config (merge {:strategy :dev :public #{"/favicon.ico" "/_/health"}}
+                            (:auth config))]
+     (-> (ring/ring-handler
+          (router node config)
+          (ring/routes
+           serve-static
+           (ring/create-default-handler)))
+         (auth/wrap-auth auth-config)
+         wrap-cookies
+         wrap-keyword-params
+         wrap-params
+         wrap-log))))
