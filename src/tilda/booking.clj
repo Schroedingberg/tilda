@@ -9,20 +9,34 @@
 ;; Requests - "I want this slot"
 ;; =============================================================================
 
+(defn find-existing-request
+  "Find an existing pending request for same tenant and exact date range."
+  [node tenant-name start-date end-date]
+  (first (xt/q node
+               '(-> (from :requests [xt/id tenant-name start-date end-date status])
+                    (where (and (= tenant-name $tenant)
+                                (= start-date $start)
+                                (= end-date $end)
+                                (= status :pending))))
+               {:args {:tenant tenant-name :start start-date :end end-date}})))
+
 (defn create-request!
-  "Submit a request for a time slot. Returns request-id."
+  "Submit a request for a time slot. Returns request-id.
+   Idempotent: returns existing request-id if same tenant+dates already pending."
   [node {:keys [tenant-name start-date end-date priority]}]
-  (let [request-id (random-uuid)]
-    (xt/execute-tx node
-                   [[:put-docs :requests
-                     {:xt/id request-id
-                      :tenant-name tenant-name
-                      :start-date start-date
-                      :end-date end-date
-                      :priority (or priority 0)
-                      :status :pending
-                      :requested-at (Instant/now)}]])
-    request-id))
+  (if-let [existing (find-existing-request node tenant-name start-date end-date)]
+    (:xt/id existing)
+    (let [request-id (random-uuid)]
+      (xt/execute-tx node
+                     [[:put-docs :requests
+                       {:xt/id request-id
+                        :tenant-name tenant-name
+                        :start-date start-date
+                        :end-date end-date
+                        :priority (or priority 0)
+                        :status :pending
+                        :requested-at (Instant/now)}]])
+      request-id)))
 
 (defn get-request [node request-id]
   (first (xt/q node '(from :requests [{:xt/id $id} *]) {:args {:id request-id}})))
