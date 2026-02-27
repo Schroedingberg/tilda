@@ -6,7 +6,7 @@
 
         ;; HTTP
         ring/ring-core {:mvn/version "1.12.2"}
-        ring/ring-jetty-adapter {:mvn/version "1.12.2"}
+        http-kit/http-kit {:mvn/version "2.8.0"}
         metosin/reitit-ring {:mvn/version "0.7.2"}
 
         ;; HTML + JSON

@@ -199,7 +199,7 @@
         next-month (.plusMonths (last months) 1)]
     [:div#calendar-container.calendar {:data-calendar true
                                        :data-tenant tenant-name
-                                       :data-on-load "@get('/calendar/events')"}
+                                       :data-init "@get('/calendar/events', {openWhenHidden: true})"}
      (for [ym months]
        (month-section ym bookings requests))
      (load-sentinel next-month)]))

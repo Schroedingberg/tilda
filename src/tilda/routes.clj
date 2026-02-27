@@ -5,12 +5,11 @@
    [cheshire.generate :as json-gen]
    [clojure.java.io :as io]
    [com.brunobonacci.mulog :as mu]
+   [org.httpkit.server :as http-kit]
    [reitit.ring :as ring]
    [ring.middleware.params :refer [wrap-params]]
    [ring.middleware.keyword-params :refer [wrap-keyword-params]]
    [ring.util.response :as resp]
-   [starfederation.datastar.clojure.api :as d*]
-   [starfederation.datastar.clojure.adapter.ring :as d*ring]
    [tilda.booking :as b]
    [tilda.views :as views]
    [tilda.views.calendar :as cal])
@@ -18,28 +17,42 @@
            [java.time.format DateTimeParseException]))
 
 ;; =============================================================================
-;; SSE Pub/Sub for live updates
+;; SSE Pub/Sub for live updates (using http-kit channels)
 ;; =============================================================================
 
-(defonce ^:private sse-clients (atom #{}))
+(defonce ^:private sse-channels (atom #{}))
 
-(defn- register-sse! [sse]
-  (swap! sse-clients conj sse)
-  (mu/log ::sse-connected :clients (count @sse-clients)))
+(defn- register-sse-channel! [channel]
+  (swap! sse-channels conj channel)
+  (mu/log ::sse-connected :clients (count @sse-channels)))
 
-(defn- unregister-sse! [sse]
-  (swap! sse-clients disj sse)
-  (mu/log ::sse-disconnected :clients (count @sse-clients)))
+(defn- unregister-sse-channel! [channel]
+  (swap! sse-channels disj channel)
+  (mu/log ::sse-disconnected :clients (count @sse-channels)))
+
+(defn- format-datastar-fragment
+  "Format HTML as a Datastar patch-elements SSE event."
+  [html]
+  (str "event: datastar-patch-elements\n"
+       "data: elements " html "\n\n"))
+
+(defn- send-sse!
+  "Send an SSE message to a channel."
+  [channel message]
+  (try
+    (http-kit/send! channel message false)  ; false = don't close
+    true
+    (catch Exception e
+      (mu/log ::sse-send-error :error (.getMessage e))
+      (unregister-sse-channel! channel)
+      false)))
 
 (defn broadcast!
   "Send HTML fragment to all connected SSE clients."
   [html]
-  (doseq [sse @sse-clients]
-    (try
-      (d*/patch-elements! sse html)
-      (catch Exception e
-        (mu/log ::broadcast-error :error (.getMessage e))
-        (unregister-sse! sse)))))
+  (let [message (format-datastar-fragment html)]
+    (doseq [channel @sse-channels]
+      (send-sse! channel message))))
 
 ;; Register JSON encoders for Java time types
 (json-gen/add-encoder Instant (fn [v jg] (.writeString jg (str v))))
@@ -152,24 +165,35 @@
     (let [month (parse-month (get-in req [:path-params :month]))
           bookings (safe-query #(b/all-bookings node))
           requests (safe-query #(b/pending-requests node))
-          html (views/render (cal/month-fragment month bookings requests))]
-      (d*ring/->sse-response req
-                             {d*ring/on-open
-                              (fn [sse]
-                                (d*/patch-elements! sse html)
-                                (d*/close-sse! sse))}))))
+          html (views/render (cal/month-fragment month bookings requests))
+          message (format-datastar-fragment html)]
+      (http-kit/as-channel req
+        {:on-open (fn [channel]
+                    ;; Send initial headers + fragment, then close
+                    (http-kit/send! channel
+                      {:headers {"Content-Type" "text/event-stream"
+                                 "Cache-Control" "no-cache"}
+                       :body message}
+                      true))}))))  ; true = close after send
 
 (defn calendar-events [_node]
   (fn [req]
-    (d*ring/->sse-response req
-      {d*ring/on-open
-       (fn [sse]
-         (register-sse! sse)
-         ;; Send initial keepalive - connection stays open
-         (d*/execute-script! sse "console.log('SSE connected')"))
-       d*ring/on-close
-       (fn [sse]
-         (unregister-sse! sse))})))
+    (http-kit/as-channel req
+      {:on-open  (fn [channel]
+                   (register-sse-channel! channel)
+                   ;; Send initial SSE headers + connected message
+                   (http-kit/send! channel
+                     {:headers {"Content-Type" "text/event-stream"
+                                "Cache-Control" "no-cache"}}
+                     false)  ; false = keep open
+                   ;; Send connected script
+                   (let [connected-msg (str "event: datastar-patch-elements\n"
+                                            "data: mode append\n"
+                                            "data: selector body\n"
+                                            "data: elements <script data-effect=\"el.remove()\">console.log('SSE connected')</script>\n\n")]
+                     (send-sse! channel connected-msg)))
+       :on-close (fn [channel _status]
+                   (unregister-sse-channel! channel))})))
 
 ;; -----------------------------------------------------------------------------
 ;; POST Handlers

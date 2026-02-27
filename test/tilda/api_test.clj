@@ -6,7 +6,7 @@
   (:require
    [clojure.test :refer [deftest is testing use-fixtures]]
    [cheshire.core :as json]
-   [ring.adapter.jetty :as jetty]
+   [org.httpkit.server :as http-kit]
    [tilda.routes :as routes]
    [xtdb.node :as xtn])
   (:import
@@ -91,14 +91,14 @@
   (let [port (find-free-port)
         node (xtn/start-node)
         handler (routes/handler node)
-        server (jetty/run-jetty handler {:port port :join? false})]
+        server (http-kit/run-server handler {:port port})]
     (try
       (binding [*server* server
                 *port* port
                 *node* node]
         (f))
       (finally
-        (.stop server)
+        (server)  ; http-kit returns a stop fn
         (.close node)))))
 
 (use-fixtures :each with-test-server)

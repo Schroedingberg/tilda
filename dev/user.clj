@@ -8,7 +8,7 @@
      (restart!)   ; stop + start"
   (:require
    [com.brunobonacci.mulog :as mu]
-   [ring.adapter.jetty :as jetty]
+   [org.httpkit.server :as http-kit]
    [ring.middleware.reload :refer [wrap-reload]]
    [tilda.routes :as routes]
    [xtdb.node :as xtn]))
@@ -34,14 +34,14 @@
           ;; wrap-reload reloads changed namespaces on each request
           handler   (-> (make-handler node)
                         (wrap-reload {:dirs ["src"]}))
-          server    (jetty/run-jetty handler {:port port :join? false})]
+          server    (http-kit/run-server handler {:port port})]
       (reset! state {:node node :server server :publisher publisher})
       (mu/log :user/started :port port)
       (println (str "🚀 Dev server on http://localhost:" port " (hot reload enabled)")))))
 
 (defn stop! []
   (when-let [{:keys [node server publisher]} @state]
-    (.stop server)
+    (server)  ; http-kit returns a stop fn
     (.close node)
     (publisher)
     (reset! state nil)

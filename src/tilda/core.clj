@@ -2,7 +2,7 @@
   "Entry point - starts XTDB node and HTTP server"
   (:require
    [com.brunobonacci.mulog :as mu]
-   [ring.adapter.jetty :as jetty]
+   [org.httpkit.server :as http-kit]
    [tilda.routes :as routes]
    [xtdb.node :as xtn])
   (:gen-class))
@@ -22,7 +22,7 @@
                     (xtn/start-node xtdb)
                     (xtn/start-node))
         handler   (routes/handler node)
-        server    (jetty/run-jetty handler {:port port :join? false})]
+        server    (http-kit/run-server handler {:port port})]
     (reset! state {:node node :server server :publisher publisher})
     (mu/log ::started :port port)
     (println (str "Tilda running on http://localhost:" port))
@@ -30,7 +30,7 @@
 
 (defn stop! []
   (when-let [{:keys [node server publisher]} @state]
-    (.stop server)
+    (server)  ; http-kit returns a stop fn
     (.close node)
     (publisher) ; stop the publisher
     (reset! state nil)
