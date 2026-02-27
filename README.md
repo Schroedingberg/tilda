@@ -135,9 +135,16 @@ Magic link users bookmark `https://car.example.com/u/alice-xK9mP2` - cookie pers
 
 - [ ] Admin UI for resolving conflicts (API works, no UI)
 - [ ] Request extension (drag to extend existing request)
-- [ ] Deployment: Dockerfile for container builds
-- [ ] Deployment: Read PORT/STORAGE_DIR from env vars
-- [ ] Deployment: Add to [lab orchestrator](https://github.com/Schroedingberg/lab)
+- [ ] Dockerfile for container builds
+- [ ] Read PORT/STORAGE_DIR from env vars
+
+## Deployment
+
+See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for:
+- Auth options (magic links, Cloudflare Access)
+- Reverse proxy setup (Caddy, nginx, Cloudflare Tunnel)
+- Production checklist
+- Systemd service file
 
 ## Code Metrics
 
