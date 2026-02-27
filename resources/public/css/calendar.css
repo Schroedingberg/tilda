@@ -6,7 +6,20 @@
  */
 
 /* ==========================================================================
-   Calendar Grid (Pico doesn't provide grid layouts)
+   Sticky Header (page header + legend)
+   ========================================================================== */
+
+.sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--pico-background-color);
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+/* ==========================================================================
+   Calendar Grid
    ========================================================================== */
 
 .calendar {
@@ -29,28 +42,39 @@
   letter-spacing: 0.05em;
   background: var(--pico-card-background-color);
   color: var(--pico-muted-color);
+  position: sticky;
+  top: 8rem; /* Below sticky header */
+  z-index: 50;
 }
 
 /* ==========================================================================
-   Month Cards
+   Calendar Container
    ========================================================================== */
 
-.month-section {
-  margin-bottom: 1.5rem;
+.calendar {
   border-radius: var(--pico-border-radius);
-  overflow: hidden;
   box-shadow: var(--pico-card-box-shadow);
+  /* Don't use overflow:hidden - breaks sticky inside */
 }
 
-.month-header {
-  font-size: 1.125rem;
+/* ==========================================================================
+   Month Indicators (subtle)
+   ========================================================================== */
+
+.day.month-start {
+  border-left: 2px solid var(--pico-primary);
+}
+
+.month-label {
+  position: absolute;
+  top: 2px;
+  right: 4px;
+  font-size: 0.6rem;
   font-weight: 600;
-  padding: 1rem 1.25rem;
-  position: sticky;
-  top: 0;
-  background: var(--pico-card-background-color);
-  border-bottom: 1px solid var(--pico-muted-border-color);
-  z-index: 10;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--pico-primary);
+  opacity: 0.7;
 }
 
 /* ==========================================================================
@@ -63,6 +87,7 @@
   background: var(--pico-card-background-color);
   cursor: pointer;
   position: relative;
+  z-index: 1; /* Below sticky headers */
   transition: background 0.15s;
 }
 

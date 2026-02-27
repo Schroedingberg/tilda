@@ -51,18 +51,6 @@
     (take-while #(not (.isAfter % end))
                 (iterate #(.plusDays % 1) start))))
 
-(defn- pad-to-week-start
-  "Pad with nils so first day aligns to Monday."
-  [days]
-  (let [first-day (first days)
-        dow (.getValue (.getDayOfWeek first-day))]
-    (concat (repeat (dec dow) nil) days)))
-
-(defn- weeks
-  "Partition month days into week rows."
-  [days]
-  (partition-all 7 (pad-to-week-start days)))
-
 ;; =============================================================================
 ;; Tenant Colors
 ;; =============================================================================
@@ -121,18 +109,33 @@
                              :style (str "color:" (tenant-color tenant-name))
                              :title (str tenant-name " (pending - drag to cancel)")}]))
 
+(defn- first-of-month?
+  "Is this the first day of the month?"
+  [^LocalDate day]
+  (= 1 (.getDayOfMonth day)))
+
+(defn- month-label
+  "Short month name for indicator."
+  [^LocalDate day]
+  (.getDisplayName (.getMonth day) TextStyle/SHORT (Locale/getDefault)))
+
 (defn day-cell
-  "Single day in calendar grid."
+  "Single day in calendar grid.
+   First-of-month days show a subtle month indicator."
   [day today bookings requests]
   (if (nil? day)
     [:div.day.empty]
     (let [day-bookings (find-bookings-for-day day bookings)
           day-requests (find-requests-for-day day requests)
           past? (.isBefore day today)
-          today? (.equals day today)]
+          today? (.equals day today)
+          first? (first-of-month? day)]
       [:div.day {:id (str "day-" day)
                  :data-day (str day)
-                 :class (cond past? "past" today? "today")}
+                 :class (str (cond past? "past" today? "today" :else "")
+                             (when first? " month-start"))}
+       (when first?
+         [:div.month-label (month-label day)])
        [:div.day-num (.getDayOfMonth day)]
        (into [:div.day-indicators]
              (concat (map #(day-indicator % true) day-bookings)
@@ -144,35 +147,31 @@
   (let [days ["Mon" "Tue" "Wed" "Thu" "Fri" "Sat" "Sun"]]
     (map #(vector :div.calendar-header %) days)))
 
-(defn month-header
-  "Month title with sticky positioning."
-  [^YearMonth ym]
-  (let [month-name (.getDisplayName (.getMonth ym) TextStyle/FULL (Locale/getDefault))]
-    [:div.month-header (str month-name " " (.getYear ym))]))
+(defn- continuous-days
+  "Generate flat sequence of days across multiple months.
+   Only pads the start to align first day to Monday."
+  [months]
+  (let [all-days (mapcat month-days months)
+        first-day (first all-days)
+        start-pad (dec (.getValue (.getDayOfWeek first-day)))]
+    (concat (repeat start-pad nil) all-days)))
 
-(defn calendar-grid
-  "The month grid with all days."
-  [^YearMonth ym bookings requests]
+(defn continuous-grid
+  "Single continuous grid of days spanning multiple months."
+  [months bookings requests]
   (let [today (LocalDate/now)
-        days (month-days ym)
-        week-rows (weeks days)]
-    (into [:div.calendar-grid]
+        all-days (continuous-days months)]
+    (into [:div#calendar-grid.calendar-grid]
           (concat (week-headers)
-                  (for [week week-rows
-                        day week]
+                  (for [day all-days]
                     (day-cell day today bookings requests))))))
 
-(defn month-section
-  "A single month section with header and grid."
-  [^YearMonth ym bookings requests]
-  [:div.month-section {:id (str "month-" ym)}
-   (month-header ym)
-   (calendar-grid ym bookings requests)])
-
 (defn load-sentinel
-  "Sentinel div that triggers loading more months when visible."
+  "Sentinel div that triggers loading more months when visible.
+   Spans full width of grid."
   [^YearMonth next-month]
   [:div.load-sentinel {:id (str "load-" next-month)
+                       :style "grid-column: 1 / -1"
                        :data-on-intersect__once (str "@get('/calendar/month/" next-month "')")}
    [:span.loading-spinner "Loading more..."]])
 
@@ -186,26 +185,35 @@
   (take n (iterate #(.plusMonths % 1) start)))
 
 (defn calendar-container
-  "Main calendar container with initial months and lazy load sentinel."
+  "Main calendar container with continuous grid and lazy load sentinel."
   [^YearMonth start-month tenant-name bookings requests]
   (let [months (initial-months start-month 3)
-        next-month (.plusMonths (last months) 1)]
+        next-month (.plusMonths (last months) 1)
+        today (LocalDate/now)
+        all-days (continuous-days months)]
     [:div#calendar-container.calendar {:data-calendar true
                                        :data-tenant tenant-name
                                        :data-init "@get('/calendar/events', {openWhenHidden: true})"}
-     (for [ym months]
-       (month-section ym bookings requests))
-     (load-sentinel next-month)]))
+     (into [:div#calendar-grid.calendar-grid]
+           (concat (week-headers)
+                   (for [day all-days]
+                     (day-cell day today bookings requests))
+                   [(load-sentinel next-month)]))]))
 
 (defn month-fragment
-  "Single month fragment for lazy loading - replaces the load sentinel.
-   Loads 3 months at a time to push sentinel below fold."
+  "Days fragment for lazy loading - replaces sentinel with day cells + new sentinel.
+   Loads 3 months of days at a time."
   [^YearMonth ym bookings requests]
   (let [months (take 3 (iterate #(.plusMonths % 1) ym))
-        next-month (.plusMonths ym 3)]
-    [:div {:id (str "load-" ym)}
-     (for [m months]
-       (month-section m bookings requests))
+        next-month (.plusMonths ym 3)
+        today (LocalDate/now)
+        ;; No start padding - days continue from previous
+        all-days (mapcat month-days months)]
+    ;; display:contents makes wrapper transparent to grid layout
+    [:div {:id (str "load-" ym)
+           :style "display: contents"}
+     (for [day all-days]
+       (day-cell day today bookings requests))
      (load-sentinel next-month)]))
 
 (defn- page-header
@@ -253,8 +261,9 @@
                :src "https://cdn.jsdelivr.net/gh/starfederation/datastar@1.0.0-RC.7/bundles/datastar.js"}]]
     [:body
      [:main.container
-      (page-header tenant-name resource-name)
-      (legend)
+      [:div.sticky-header
+       (page-header tenant-name resource-name)
+       (legend)]
       (calendar-container start-month tenant-name bookings requests)]
      [:script {:src "/js/calendar.js" :defer true}]]]))
 
