@@ -196,6 +196,31 @@
       (is (= 2 (count (:json resp)))))))
 
 ;; =============================================================================
+;; Tests: DELETE /requests/:id - Cancel Request
+;; =============================================================================
+
+(deftest delete-request-test
+  (testing "DELETE /requests/:id cancels a pending request"
+    (let [request-id (create-test-request! "Zara" "2026-06-15T00:00:00Z" "2026-06-16T00:00:00Z")]
+      ;; Verify request exists
+      (let [resp (http-get "/requests")]
+        (is (= 1 (count (:json resp)))))
+
+      ;; Delete it
+      (let [delete-resp (http-delete (str "/requests/" request-id))]
+        (is (= 204 (:status delete-resp))))
+
+      ;; Verify it's gone
+      (let [resp (http-get "/requests")]
+        (is (= 0 (count (:json resp))))))))
+
+(deftest delete-request-not-found-test
+  (testing "DELETE /requests/:id returns 404 for non-existent request"
+    (let [fake-id (random-uuid)
+          resp (http-delete (str "/requests/" fake-id))]
+      (is (= 404 (:status resp))))))
+
+;; =============================================================================
 ;; Tests: POST /requests/resolve - Resolve Requests
 ;; =============================================================================
 

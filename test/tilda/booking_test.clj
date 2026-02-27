@@ -85,6 +85,18 @@
     (is (seq (b/request-history *node* r1)))
     (is (seq (b/request-history *node* r2)))))
 
+(deftest cancel-request-test
+  (let [req-id (b/create-request! *node* {:tenant-name "Flo"
+                                          :start-date (instant "2026-06-01T00:00:00Z")
+                                          :end-date (instant "2026-06-02T00:00:00Z")})]
+    ;; Request exists
+    (is (some? (b/get-request *node* req-id)))
+    (b/cancel-request! *node* req-id)
+    ;; Request gone
+    (is (nil? (b/get-request *node* req-id)))
+    ;; But history proves it existed
+    (is (seq (b/request-history *node* req-id)))))
+
 ;; =============================================================================
 ;; Booking Tests
 ;; =============================================================================
