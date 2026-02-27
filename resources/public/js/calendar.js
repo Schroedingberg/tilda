@@ -6,6 +6,7 @@
   const calendar = document.querySelector('[data-calendar]');
   if (!calendar) return;
 
+  const tenant = calendar.dataset.tenant;
   let startDay = null;
   let isDragging = false;
 
@@ -14,6 +15,11 @@
     const point = e.touches?.[0] ?? e;
     const el = document.elementFromPoint(point.clientX, point.clientY);
     return el?.closest('[data-day]');
+  };
+
+  // Check if click was on a pending indicator
+  const getIndicator = (e) => {
+    return e.target.closest('.indicator.pending[data-request-id]');
   };
 
   // Get all day elements between two dates (inclusive)
@@ -46,12 +52,24 @@
       body: JSON.stringify({ 
         'start-date': from + 'T00:00:00Z',
         'end-date': to + 'T23:59:59Z',
-        'tenant-name': calendar.dataset.tenant
+        'tenant-name': tenant
       })
     });
   };
 
+  const deleteRequest = async (requestId) => {
+    await fetch('/requests/' + requestId, { method: 'DELETE' });
+  };
+
   const onStart = (e) => {
+    // If clicking on own pending indicator, delete it instead of dragging
+    const indicator = getIndicator(e);
+    if (indicator && indicator.dataset.requestTenant === tenant) {
+      deleteRequest(indicator.dataset.requestId);
+      e.preventDefault();
+      return;
+    }
+    
     const day = getDay(e);
     if (day && !day.classList.contains('past')) {
       startDay = day;

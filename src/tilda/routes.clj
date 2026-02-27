@@ -16,6 +16,7 @@
    | GET    | /calendar/events    | SSE endpoint for live updates  |
    | GET    | /requests           | List pending requests (JSON)   |
    | POST   | /requests           | Create booking request         |
+   | DELETE | /requests/:id       | Cancel a pending request       |
    | POST   | /requests/resolve   | Resolve competing requests     |
    | GET    | /bookings           | List all bookings (JSON)       |
    | GET    | /bookings/:id       | Get single booking             |
@@ -229,6 +230,19 @@
                   (resp/status 201)))))
         (error-response 400 "Invalid JSON body")))))
 
+(defn cancel-request
+  "DELETE /requests/:id - Cancel a pending request."
+  [node]
+  (fn [req]
+    (let [id-str (get-in req [:path-params :id])
+          id     (parse-uuid id-str)]
+      (if-let [request (and id (b/get-request node id))]
+        (do
+          (b/cancel-request! node id)
+          (broadcast-calendar-update! node (:start-date request) (:end-date request))
+          (resp/status (resp/response "") 204))
+        (error-response 404 "Request not found")))))
+
 (defn resolve-requests
   "POST /requests/resolve - Resolve competing requests for a time slot.
    Body: {start-date, end-date, decider: fcfs|priority|lottery}"
@@ -273,13 +287,15 @@
     ["/requests"
      ["" {:get (list-requests node)
           :post (create-request node)}]
-     ["/resolve" {:post (resolve-requests node)}]]
+     ["/resolve" {:post (resolve-requests node)}]
+     ["/:id" {:delete (cancel-request node)}]]
 
     ["/bookings"
      ["" {:get (list-bookings node)}]
      ["/:id" {:get (get-booking node)
               :delete (cancel-booking node)}]
-     ["/:id/history" {:get (booking-history node)}]]]))
+     ["/:id/history" {:get (booking-history node)}]]]
+   {:conflicts nil}))
 
 (defn serve-static [req]
   (let [path (subs (:uri req) 1)]

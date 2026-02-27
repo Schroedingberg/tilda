@@ -154,10 +154,23 @@
       :end-date (instant "2026-01-05T10:00:00Z")
       :priority 10 :xt/id 124}])
 
+  (defn instant-min [a b] (if (.isBefore a b) a b))
+  (defn instant-max [a b] (if (.isAfter a b) a b))
+
   (let [[existing-request new-request] one-tenant-tries-extend-request
         extends? (and
                   (.isAfter (:start-date new-request) (:start-date existing-request))
-                  (.isAfter (:end-date new-request) (:end-date existing-request)))])
+                  (.isAfter (:end-date new-request) (:end-date existing-request)))]
+    (if extends?
+      (assoc existing-request
+             :start-date (instant-min (:start-date existing-request) (:start-date new-request))
+             :end-date (instant-max (:end-date existing-request) (:end-date new-request)))))
+  ;;=> {:tenant-name "Val",
+  ;;    :requested-at #xt/instant "2026-01-01T09:00:00Z",
+  ;;    :start-date #xt/instant "2026-01-01T09:00:00Z",
+  ;;    :end-date #xt/instant "2026-01-05T10:00:00Z",
+  ;;    :priority 5,
+  ;;    :xt/id 123}
 
 
 

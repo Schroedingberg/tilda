@@ -110,11 +110,16 @@
 ;; =============================================================================
 
 (defn day-indicator
-  "Small colored dot for a booking/request."
-  [{:keys [tenant-name]} booked?]
-  [:div.indicator {:class (if booked? "booked" "pending")
-                   :style (str "background:" (tenant-color tenant-name))
-                   :title tenant-name}])
+  "Small colored dot for a booking/request.
+   Pending requests include request-id for deletion."
+  [{:keys [xt/id tenant-name]} booked?]
+  (if booked?
+    [:div.indicator.booked {:style (str "background:" (tenant-color tenant-name))
+                            :title tenant-name}]
+    [:div.indicator.pending {:data-request-id (str id)
+                             :data-request-tenant tenant-name
+                             :style (str "background:" (tenant-color tenant-name))
+                             :title (str tenant-name " (click to cancel)")}]))
 
 (defn day-cell
   "Single day in calendar grid."

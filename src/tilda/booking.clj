@@ -93,6 +93,11 @@
         '(from :requests {:bind [{:xt/id $id} *] :for-valid-time :all-time})
         {:args {:id request-id}}))
 
+(defn cancel-request!
+  "Delete a pending request. Use request-history to prove it existed."
+  [node request-id]
+  (xt/execute-tx node [[:delete-docs :requests request-id]]))
+
 ;; =============================================================================
 ;; Bookings - "This slot is confirmed"
 ;; =============================================================================
