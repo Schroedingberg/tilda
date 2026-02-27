@@ -12,7 +12,7 @@
             :description "VW Golf, parking spot A3"}
 
  ;; Dev mode - no auth required (stub user)
- :auth {:strategy :dev}
+ ;;:auth {:strategy :dev}
 
  ;; Magic-link auth for multi-tenant testing:
  ;; :auth {:strategy :magic-link
