@@ -109,6 +109,9 @@ curl -X DELETE localhost:8080/bookings/{id}
 - [ ] Auth (stub in `auth.clj`, ready for Oak integration)
 - [ ] Admin UI for resolving conflicts (API works, no UI)
 - [ ] Request extension (drag to extend existing request)
+- [ ] Deployment: Dockerfile for container builds
+- [ ] Deployment: Read PORT/STORAGE_DIR from env vars
+- [ ] Deployment: Add to [lab orchestrator](https://github.com/Schroedingberg/lab)
 
 ## Architecture Decisions
 
