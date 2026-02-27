@@ -302,16 +302,48 @@
 (defn admin-conflicts-fragment
   "GET /admin/conflicts - SSE fragment for conflicts list."
   [node]
-  (fn [_req]
-    (let [requests (safe-query #(b/pending-requests node))]
-      (html-response (admin/conflicts-fragment requests)))))
+  (fn [req]
+    (let [requests (safe-query #(b/pending-requests node))
+          html (views/render (admin/conflicts-fragment requests))
+          message (sse/format-datastar-fragment html)]
+      (http-kit/as-channel req
+                           {:on-open (fn [channel]
+                                       (http-kit/send! channel
+                                                       {:headers {"Content-Type" "text/event-stream"
+                                                                  "Cache-Control" "no-cache"}
+                                                        :body message}
+                                                       true))}))))
+
+(defn- sse-fragment-response
+  "Return SSE response with a Datastar fragment."
+  [req html]
+  (let [message (sse/format-datastar-fragment html)]
+    (http-kit/as-channel req
+                         {:on-open (fn [channel]
+                                     (http-kit/send! channel
+                                                     {:headers {"Content-Type" "text/event-stream"
+                                                                "Cache-Control" "no-cache"}
+                                                      :body message}
+                                                     true))})))
 
 (defn admin-resolve
   "POST /admin/resolve - Resolve with specific winner or decider.
-   Body: {winner: uuid} OR {decider: fcfs|lottery, start: ..., end: ...}"
+   Returns SSE fragment to update the conflicts list."
   [node]
   (fn [req]
-    (let [body (parse-body req)]
+    (let [body (parse-body req)
+          resolve-and-respond
+          (fn [start end decider-fn]
+            (let [conflicts (safe-query #(b/find-conflicting-requests node start end))]
+              (if (empty? conflicts)
+                (error-response 404 "No conflicts found")
+                (do
+                  (b/resolve-slot! node conflicts decider-fn)
+                  (broadcast-calendar-update! node start end)
+                  ;; Return updated conflicts fragment
+                  (let [requests (safe-query #(b/pending-requests node))
+                        html (views/render (admin/conflicts-fragment requests))]
+                    (sse-fragment-response req html))))))]
       (cond
         ;; Pick specific winner
         (:winner body)
@@ -321,30 +353,19 @@
                 conflicts (safe-query #(b/find-conflicting-requests node start end))
                 winner (first (filter #(= (:xt/id %) winner-id) conflicts))]
             (if winner
-              (let [result (b/resolve-slot! node conflicts (constantly winner))]
-                (broadcast-calendar-update! node start end)
-                (json-response {:success true
-                                :booking-id (str (:booking-id result))
-                                :winner (str winner-id)}))
+              (resolve-and-respond start end (constantly winner))
               (error-response 404 "Winner not found in conflicts")))
           (error-response 400 "Invalid winner UUID"))
-        
+
         ;; Use decider
         (:decider body)
         (let [start (parse-instant (:start body))
               end (parse-instant (:end body))
               decider-fn (get deciders (:decider body))]
           (if decider-fn
-            (let [conflicts (safe-query #(b/find-conflicting-requests node start end))]
-              (if (empty? conflicts)
-                (error-response 404 "No conflicts found")
-                (let [result (b/resolve-slot! node conflicts decider-fn)]
-                  (broadcast-calendar-update! node start end)
-                  (json-response {:success true
-                                  :booking-id (str (:booking-id result))
-                                  :winner (str (:winner result))}))))
+            (resolve-and-respond start end decider-fn)
             (error-response 400 (str "Invalid decider. Use: " (keys deciders)))))
-        
+
         :else
         (error-response 400 "Provide 'winner' or 'decider' in body")))))
 

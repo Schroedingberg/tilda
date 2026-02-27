@@ -224,8 +224,8 @@
     [:hgroup
      [:h1 (or resource-name "Booking Calendar")]
      [:p "Drag to select dates for your booking request"]]
-    [:a {:href "/admin" 
-         :style "font-size: 0.875rem; text-decoration: none; color: #666; padding: 0.5rem;"} 
+    [:a {:href "/admin"
+         :style "font-size: 0.875rem; text-decoration: none; color: #666; padding: 0.5rem;"}
      "Admin"]]
    [:small {:style "display: inline-flex; align-items: center; gap: 0.5rem;"}
     [:span {:style (str "width: 12px; height: 12px; border-radius: 50%; background:" (tenant-color tenant-name))}]
