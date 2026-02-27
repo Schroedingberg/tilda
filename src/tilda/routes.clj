@@ -88,6 +88,11 @@
   [f]
   (try (f) (catch Exception _ [])))
 
+(defn path-id
+  "Extract and parse UUID from path params :id."
+  [req]
+  (some-> req (get-in [:path-params :id]) parse-uuid))
+
 ;; =============================================================================
 ;; Live Update Broadcasting
 ;; =============================================================================
@@ -124,14 +129,14 @@
 
 (defn get-booking [node]
   (fn [req]
-    (let [id (parse-uuid (get-in req [:path-params :id]))]
+    (let [id (path-id req)]
       (if-let [booking (b/get-booking node id)]
         (json-response booking)
         (resp/not-found "Booking not found")))))
 
 (defn cancel-booking [node]
   (fn [req]
-    (let [id (parse-uuid (get-in req [:path-params :id]))]
+    (let [id (path-id req)]
       (if-let [{:keys [start-date end-date]} (b/get-booking node id)]
         (do
           (b/cancel-booking! node id)
@@ -141,7 +146,7 @@
 
 (defn booking-history [node]
   (fn [req]
-    (let [id (parse-uuid (get-in req [:path-params :id]))]
+    (let [id (path-id req)]
       (json-response (safe-query #(b/booking-history node id))))))
 
 ;; -----------------------------------------------------------------------------
@@ -234,8 +239,7 @@
   "DELETE /requests/:id - Cancel a pending request."
   [node]
   (fn [req]
-    (let [id-str (get-in req [:path-params :id])
-          id     (parse-uuid id-str)]
+    (let [id (path-id req)]
       (if-let [request (and id (b/get-request node id))]
         (do
           (b/cancel-request! node id)

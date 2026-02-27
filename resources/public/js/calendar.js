@@ -1,6 +1,10 @@
 /**
  * Calendar drag selection - minimal JS for click-drag date range picking.
- * Everything else (nav, cancel, SSE updates) handled by Datastar.
+ * Everything else (nav, SSE updates) handled by Datastar.
+ * 
+ * Selection logic:
+ * - If selection starts on a day with YOUR pending request → delete that request
+ * - Otherwise → create new request for selected range
  */
 (function() {
   const calendar = document.querySelector('[data-calendar]');
@@ -17,9 +21,9 @@
     return el?.closest('[data-day]');
   };
 
-  // Check if click was on a pending indicator
-  const getIndicator = (e) => {
-    return e.target.closest('.indicator.pending[data-request-id]');
+  // Find tenant's pending request indicator on a day
+  const getOwnPendingRequest = (dayEl) => {
+    return dayEl?.querySelector(`.indicator.pending[data-request-tenant="${tenant}"]`);
   };
 
   // Get all day elements between two dates (inclusive)
@@ -43,9 +47,8 @@
     }
   };
 
-  const submitRange = async (start, end) => {
+  const createRequest = async (start, end) => {
     const [from, to] = [start, end].sort();
-    clearSelection();
     await fetch('/requests', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -62,14 +65,6 @@
   };
 
   const onStart = (e) => {
-    // If clicking on own pending indicator, delete it instead of dragging
-    const indicator = getIndicator(e);
-    if (indicator && indicator.dataset.requestTenant === tenant) {
-      deleteRequest(indicator.dataset.requestId);
-      e.preventDefault();
-      return;
-    }
-    
     const day = getDay(e);
     if (day && !day.classList.contains('past')) {
       startDay = day;
@@ -88,9 +83,20 @@
   const onEnd = (e) => {
     if (!isDragging) return;
     const endDay = getDay(e) ?? [...calendar.querySelectorAll('.selecting')].pop();
+    
     if (startDay && endDay) {
-      submitRange(startDay.dataset.day, endDay.dataset.day);
+      // Check if selection starts on a day with our pending request
+      const ownRequest = getOwnPendingRequest(startDay);
+      if (ownRequest) {
+        // Delete mode: cancel the existing request
+        deleteRequest(ownRequest.dataset.requestId);
+      } else {
+        // Create mode: new request for selected range
+        createRequest(startDay.dataset.day, endDay.dataset.day);
+      }
     }
+    
+    clearSelection();
     startDay = null;
     isDragging = false;
   };
