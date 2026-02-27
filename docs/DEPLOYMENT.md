@@ -66,7 +66,26 @@ done
 
 ---
 
-### Option 2: Cloudflare Access (Recommended for public internet)
+### Option 2: Header-Based Auth (Caddy, nginx, Authelia)
+
+**How it works:** Reverse proxy handles auth and passes username in `X-Remote-User` header.
+
+```edn
+:auth {:strategy :header
+       :header-name "X-Remote-User"}  ; optional, this is the default
+```
+
+Use with:
+- Caddy basicauth (see Reverse Proxy section)
+- Caddy + Authelia
+- nginx `auth_basic` + `proxy_set_header`
+- Any reverse proxy that sets user headers
+
+**User experience:** Depends on proxy auth method - could be password prompt, login form, or auto-login via client cert.
+
+---
+
+### Option 3: Cloudflare Access (Recommended for public internet)
 
 **How it works:** Cloudflare handles login via email magic links. Your app just reads the authenticated email from headers.
 
@@ -95,7 +114,7 @@ done
 
 ---
 
-### Option 3: Development Mode
+### Option 4: Development Mode
 
 **For local testing only.** No auth, hardcoded stub user.
 
@@ -119,30 +138,77 @@ car.example.com {
 
 Caddy handles HTTPS automatically via Let's Encrypt.
 
-### nginx
+#### Caddy with Basic Auth
 
-```nginx
-server {
-    listen 443 ssl http2;
-    server_name car.example.com;
+Simple password protection - useful if you want Caddy to handle auth instead of the app:
 
-    ssl_certificate /etc/letsencrypt/live/car.example.com/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/car.example.com/privkey.pem;
-
-    location / {
-        proxy_pass http://127.0.0.1:8080;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "upgrade";
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        
-        # SSE support
-        proxy_buffering off;
-        proxy_cache off;
+```caddyfile
+car.example.com {
+    basicauth /* {
+        alice $2a$14$... # bcrypt hash
+        bob   $2a$14$...
+    }
+    reverse_proxy localhost:8080 {
+        header_up X-Remote-User {http.auth.user.id}
     }
 }
 ```
+
+Generate password hashes: `caddy hash-password`
+
+**Downside:** Users must type password each visit (browser may cache).
+
+#### Caddy with Authelia (Full SSO)
+
+For a proper login page with "remember me", use Authelia:
+
+```caddyfile
+car.example.com {
+    forward_auth authelia:9091 {
+        uri /api/verify?rd=https://auth.example.com
+        copy_headers Remote-User Remote-Groups
+    }
+    reverse_proxy localhost:8080 {
+        header_up X-Remote-User {http.request.header.Remote-User}
+    }
+}
+```
+
+Authelia provides: login form, 2FA, remember-me sessions, user management.
+
+#### Caddy with Client Certificates (Zero-Click Auth)
+
+**Best for tech-savvy users** - generate a certificate per user, install once, never authenticate again:
+
+```caddyfile
+car.example.com {
+    tls {
+        client_auth {
+            mode require_and_verify
+            trusted_ca_cert_file /etc/caddy/ca.crt
+        }
+    }
+    reverse_proxy localhost:8080 {
+        header_up X-Client-CN {http.request.tls.client.subject.CN}
+    }
+}
+```
+
+Generate certs:
+```bash
+# Create CA
+openssl genrsa -out ca.key 4096
+openssl req -x509 -new -nodes -key ca.key -sha256 -days 3650 -out ca.crt -subj "/CN=Tilda CA"
+
+# Create user cert
+openssl genrsa -out alice.key 2048
+openssl req -new -key alice.key -out alice.csr -subj "/CN=Alice"
+openssl x509 -req -in alice.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out alice.crt -days 365
+openssl pkcs12 -export -out alice.p12 -inkey alice.key -in alice.crt  # Import this to browser/device
+```
+
+User installs `.p12` file once → auto-authenticated on every visit.
+
 
 ### Cloudflare Tunnel
 

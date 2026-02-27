@@ -4,8 +4,8 @@
    Strategies configured via :auth in config.edn:
    
    {:auth {:strategy :dev}}              ; Stub user, no auth
-   {:auth {:strategy :cloudflare}}       ; Cloudflare Access headers
-   {:auth {:strategy :magic-link         ; Personal URL tokens
+   {:auth {:strategy :cloudflare}}       ; Cloudflare Access headers   {:auth {:strategy :header             ; Reverse proxy auth (Caddy, nginx, Authelia)
+           :header-name \"X-Remote-User\"}}  ; optional, default shown   {:auth {:strategy :magic-link         ; Personal URL tokens
            :users {\"alice-xK9mP2\" {:name \"Alice\" :email \"alice@example.com\"}
                    \"bob-qR7nL4\"   {:name \"Bob\"   :email \"bob@example.com\"}}}}
    
@@ -36,6 +36,16 @@
     {:id    (java.util.UUID/nameUUIDFromBytes (.getBytes email))
      :email email
      :name  (first (str/split email #"@"))
+     :roles #{:user}}))
+
+(defmethod extract-user :header
+  [{:keys [header-name] :or {header-name "x-remote-user"}} request]
+  ;; Works with Caddy basicauth, Authelia, nginx auth_request, etc.
+  ;; Header value can be email or username
+  (when-let [user-id (get-in request [:headers (str/lower-case header-name)])]
+    {:id    (java.util.UUID/nameUUIDFromBytes (.getBytes user-id))
+     :email (if (str/includes? user-id "@") user-id (str user-id "@local"))
+     :name  (first (str/split user-id #"@"))
      :roles #{:user}}))
 
 (defmethod extract-user :magic-link
