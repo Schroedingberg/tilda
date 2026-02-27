@@ -1,5 +1,35 @@
 (ns tilda.core
-  "Entry point - starts XTDB node and HTTP server"
+  "Application entry point and lifecycle management.
+   
+   ## Overview
+   
+   This namespace provides the main entry point for Tilda. It manages:
+   - XTDB node lifecycle (database)
+   - http-kit server lifecycle (HTTP/SSE)
+   - mulog publisher lifecycle (logging)
+   
+   ## Usage
+   
+   From REPL:
+   ```clojure
+   (require '[tilda.core :as app])
+   (app/start!)           ;; Start with defaults (port 8080, in-memory DB)
+   (app/start! :port 3000) ;; Start on custom port
+   (app/stop!)             ;; Stop everything
+   (app/node)              ;; Access the XTDB node
+   ```
+   
+   From command line:
+   ```bash
+   clj -M -m tilda.core
+   ```
+   
+   ## State Management
+   
+   State is held in a single atom containing:
+   - :node - XTDB node instance
+   - :server - http-kit stop function
+   - :publisher - mulog publisher stop function"
   (:require
    [com.brunobonacci.mulog :as mu]
    [org.httpkit.server :as http-kit]

@@ -1,7 +1,39 @@
 (ns tilda.booking
-  "Two-table design: requests (expressions of interest) → bookings (confirmed reservations).
+  "Domain logic for the booking system.
    
-   Lifecycle: create-request! → resolve-slot! → booking created, losers rejected"
+   ## Data Model
+   
+   Two-table design with clear separation:
+   
+   ```
+   requests (pending)  ──resolve-slot!──>  bookings (confirmed)
+                            │
+                            └──> rejected requests updated
+   ```
+   
+   **Requests** - Expressions of interest for a time slot:
+   - Created via `create-request!` (idempotent per tenant+dates)
+   - Status: :pending → :booked | :rejected
+   - Attributes: tenant-name, start-date, end-date, priority
+   
+   **Bookings** - Confirmed reservations:
+   - Created when resolving conflicting requests
+   - Status: :confirmed → :cancelled
+   - Linked to winning request via request-id
+   
+   ## Resolution Strategies
+   
+   When multiple requests compete for a slot, use `resolve-slot!` with
+   a decider function:
+   
+   - `decide-first-come-first-serve` - Earliest request wins
+   - `decide-by-priority` - Highest priority wins
+   - `decide-random-lottery` - Random selection
+   
+   ## Idempotency
+   
+   `create-request!` is idempotent: calling with the same tenant and
+   exact date range returns the existing request-id."
   (:require [xtdb.api :as xt])
   (:import [java.time Instant]))
 
