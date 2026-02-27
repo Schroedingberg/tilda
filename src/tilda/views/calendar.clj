@@ -1,5 +1,32 @@
 (ns tilda.views.calendar
-  "Calendar UI components - continuous scrolling calendar with lazy load"
+  "Calendar UI components for continuous-scroll calendar with lazy loading.
+   
+   ## Overview
+   
+   This namespace provides Hiccup components for rendering a calendar view
+   with infinite scroll. The calendar loads 3 months initially and lazy-loads
+   more months via Datastar's `data-on-intersect` as the user scrolls.
+   
+   ## Key Components
+   
+   - `calendar-page` - Full HTML page with calendar container
+   - `calendar-container` - Main calendar with initial months + sentinel
+   - `month-section` - Single month with header and day grid
+   - `month-fragment` - Fragment for lazy-loading (returns 3 months)
+   - `day-cell` - Individual day with booking/request indicators
+   - `day-cells-for-range` - Generate cells for SSE broadcast
+   
+   ## Date Range Format
+   
+   All dates are handled as java.time types:
+   - `YearMonth` for month navigation
+   - `LocalDate` for day cells
+   - `Instant` for booking/request date ranges
+   
+   ## Styling
+   
+   CSS styles are loaded from /css/calendar.css (see resources/public/css/).
+   Tenant colors are generated deterministically from tenant name hash."
   (:import [java.time LocalDate YearMonth ZoneId Instant]
            [java.time.format TextStyle]
            [java.util Locale]))
@@ -77,45 +104,6 @@
         end-day (to-local-date end)]
     (take-while #(not (.isAfter % end-day))
                 (iterate #(.plusDays % 1) start-day))))
-
-;; =============================================================================
-;; CSS
-;; =============================================================================
-
-(def calendar-css
-  "
-  .calendar { user-select: none; max-width: 900px; margin: 0 auto; }
-  .month-section { margin-bottom: 2rem; }
-  .month-header { 
-    font-size: 1.5rem; font-weight: bold; padding: 1rem 0; 
-    position: sticky; top: 0; background: white; z-index: 10;
-    border-bottom: 2px solid #e5e7eb;
-  }
-  .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
-  .calendar-header { padding: 0.5rem; text-align: center; font-weight: bold; background: #f3f4f6; }
-  .day { 
-    min-height: 60px; padding: 0.5rem; border: 1px solid #e5e7eb; 
-    cursor: pointer; position: relative; transition: all 0.15s;
-  }
-  .day:hover { background: #f0f9ff; }
-  .day.past { background: #f9fafb; color: #9ca3af; cursor: not-allowed; }
-  .day.today { border: 2px solid #3b82f6; }
-  .day.empty { border: none; background: transparent; cursor: default; }
-  .day-num { font-size: 0.875rem; }
-  .day-indicators { display: flex; flex-wrap: wrap; gap: 2px; margin-top: 4px; }
-  .indicator { width: 8px; height: 8px; border-radius: 50%; }
-  .indicator.booked { opacity: 1; }
-  .indicator.pending { opacity: 0.5; }
-  .selecting { background: #3b82f6 !important; color: white; }
-  .selecting .day-num { color: white; }
-  .load-sentinel { height: 100px; display: flex; align-items: center; justify-content: center; }
-  .loading-spinner { color: #6b7280; }
-  @keyframes pulse { 
-    0%, 100% { box-shadow: 0 0 0 0 rgba(59,130,246,0.4); }
-    50% { box-shadow: 0 0 0 4px rgba(59,130,246,0); }
-  }
-  .selecting { animation: pulse 1.2s ease-in-out infinite; }
-  ")
 
 ;; =============================================================================
 ;; Components (small, composable)
@@ -225,7 +213,7 @@
     [:title "Tilda - Calendar"]
     [:script {:type "module"
               :src "https://cdn.jsdelivr.net/gh/starfederation/datastar@1.0.0-RC.7/bundles/datastar.js"}]
-    [:style calendar-css]]
+    [:link {:rel "stylesheet" :href "/css/calendar.css"}]]
    [:body
     [:h1 "Booking Calendar"]
     [:p "Drag to select dates for your booking request."]
