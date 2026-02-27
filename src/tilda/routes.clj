@@ -165,7 +165,9 @@
 (defn calendar-page [node config]
   (fn [req]
     (let [month (parse-month (get-in req [:params :month]))
-          tenant (get-in req [:params :tenant] "demo-user")
+          tenant (or (get-in req [:user :name])
+                     (get-in req [:params :tenant])
+                     "Guest")
           resource-name (get-in config [:resource :name])
           bookings (safe-query #(b/all-bookings node))
           requests (safe-query #(b/pending-requests node))]
@@ -214,16 +216,20 @@
 
 (defn create-request
   "POST /requests - Create a booking request.
-   Body: {tenant-name, start-date, end-date, priority?}"
+   Body: {start-date, end-date, priority?, tenant-name?}
+   tenant-name from body takes precedence; falls back to authenticated user."
   [node]
   (fn [req]
-    (let [body (parse-body req)]
-      (if-let [{:keys [tenant-name start-date end-date priority]} body]
+    (let [body (parse-body req)
+          ;; Body tenant-name takes precedence (for API/testing), else use auth
+          tenant-name (or (:tenant-name body)
+                          (get-in req [:user :name]))]
+      (if-let [{:keys [start-date end-date priority]} body]
         (let [start (parse-instant start-date)
               end   (parse-instant end-date)]
           (cond
             (not tenant-name)
-            (error-response 400 "Missing tenant-name")
+            (error-response 400 "Missing tenant-name (not authenticated)")
 
             (or (nil? start) (nil? end))
             (error-response 400 "Invalid date format. Use ISO-8601 (e.g., 2026-03-01T00:00:00Z)")

@@ -10,20 +10,14 @@
 
  :resource {:name "Shared Car"
             :description "VW Golf, parking spot A3"}
- 
- ;; Authentication strategy - pick one:
- ;;
- ;; :dev - No auth, uses stub user (default for development)
- ;; :auth {:strategy :dev}
- ;;
- ;; :cloudflare - Cloudflare Access, reads email from header
- ;; :auth {:strategy :cloudflare}
- ;;
- ;; :magic-link - Personal URLs, zero friction
- ;; :auth {:strategy :magic-link
- ;;        :users {"alice-xK9mP2" {:name "Alice" :email "alice@example.com"}
- ;;                "bob-qR7nL4"   {:name "Bob"   :email "bob@example.com"}}}
- ;;
- ;; Users bookmark: https://car.example.com/u/alice-xK9mP2
- ;; First visit sets cookie, then just go to /calendar
+
+ ;; Magic-link auth for local multi-tenant testing
+ :auth {:strategy :magic-link
+        :users {"alice" {:name "Alice" :email "alice@example.com"}
+                "bob"   {:name "Bob"   :email "bob@example.com"}
+                "carol" {:name "Carol" :email "carol@example.com"}}}
+
+ ;; Other auth options:
+ ;; :auth {:strategy :dev}        ; stub user, no auth
+ ;; :auth {:strategy :cloudflare} ; Cloudflare Access headers
  }

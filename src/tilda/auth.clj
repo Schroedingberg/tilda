@@ -71,24 +71,24 @@
         ;; Public paths - no auth needed
         (contains? public path)
         (handler request)
-        
+
         ;; Magic link login - set cookie and redirect
         (and (= strategy :magic-link)
              (clojure.string/starts-with? path "/u/"))
         (let [token (subs path 3)]
-          (if (extract-user (assoc config :strategy strategy) 
-                           (assoc-in request [:path-params :token] token))
+          (if (extract-user (assoc config :strategy strategy)
+                            (assoc-in request [:path-params :token] token))
             {:status  303
              :headers {"Location" "/calendar"
-                       "Set-Cookie" (str "tilda-token=" token 
-                                        "; Path=/; HttpOnly; SameSite=Lax; Max-Age=31536000")}
+                       "Set-Cookie" (str "tilda-token=" token
+                                         "; Path=/; HttpOnly; SameSite=Lax; Max-Age=31536000")}
              :body    ""}
             {:status 403 :body "Invalid link"}))
-        
+
         ;; Authenticated - proceed
         user
         (handler (assoc request :user user))
-        
+
         ;; Unauthenticated
         :else
         {:status 401
