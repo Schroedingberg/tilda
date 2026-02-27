@@ -1,5 +1,32 @@
 (ns tilda.routes
-  "HTTP routes - Ring + Reitit"
+  "HTTP routes for the Tilda booking system.
+   
+   ## Overview
+   
+   This namespace defines all HTTP endpoints using Reitit. It delegates
+   to domain logic in tilda.booking and renders views from tilda.views.layout.
+   
+   ## Endpoints
+   
+   | Method | Path                | Description                    |
+   |--------|---------------------|--------------------------------|
+   | GET    | /                   | Home page with bookings list   |
+   | GET    | /calendar           | Interactive calendar view      |
+   | GET    | /calendar/month/:m  | Lazy-load month fragment       |
+   | GET    | /calendar/events    | SSE endpoint for live updates  |
+   | GET    | /requests           | List pending requests (JSON)   |
+   | POST   | /requests           | Create booking request         |
+   | POST   | /requests/resolve   | Resolve competing requests     |
+   | GET    | /bookings           | List all bookings (JSON)       |
+   | GET    | /bookings/:id       | Get single booking             |
+   | DELETE | /bookings/:id       | Cancel a booking               |
+   | GET    | /bookings/:id/history | Booking version history      |
+   
+   ## Live Updates
+   
+   The calendar supports real-time updates via SSE. When bookings or
+   requests change, the affected day cells are broadcast to all connected
+   clients using Datastar's patch-elements event format."
   (:require
    [cheshire.core :as json]
    [cheshire.generate :as json-gen]
@@ -11,48 +38,11 @@
    [ring.middleware.keyword-params :refer [wrap-keyword-params]]
    [ring.util.response :as resp]
    [tilda.booking :as b]
-   [tilda.views :as views]
+   [tilda.sse :as sse]
+   [tilda.views.layout :as views]
    [tilda.views.calendar :as cal])
   (:import [java.time Instant ZonedDateTime LocalDate LocalDateTime YearMonth]
            [java.time.format DateTimeParseException]))
-
-;; =============================================================================
-;; SSE Pub/Sub for live updates (using http-kit channels)
-;; =============================================================================
-
-(defonce ^:private sse-channels (atom #{}))
-
-(defn- register-sse-channel! [channel]
-  (swap! sse-channels conj channel)
-  (mu/log ::sse-connected :clients (count @sse-channels)))
-
-(defn- unregister-sse-channel! [channel]
-  (swap! sse-channels disj channel)
-  (mu/log ::sse-disconnected :clients (count @sse-channels)))
-
-(defn- format-datastar-fragment
-  "Format HTML as a Datastar patch-elements SSE event."
-  [html]
-  (str "event: datastar-patch-elements\n"
-       "data: elements " html "\n\n"))
-
-(defn- send-sse!
-  "Send an SSE message to a channel."
-  [channel message]
-  (try
-    (http-kit/send! channel message false)  ; false = don't close
-    true
-    (catch Exception e
-      (mu/log ::sse-send-error :error (.getMessage e))
-      (unregister-sse-channel! channel)
-      false)))
-
-(defn broadcast!
-  "Send HTML fragment to all connected SSE clients."
-  [html]
-  (let [message (format-datastar-fragment html)]
-    (doseq [channel @sse-channels]
-      (send-sse! channel message))))
 
 ;; Register JSON encoders for Java time types
 (json-gen/add-encoder Instant (fn [v jg] (.writeString jg (str v))))
@@ -98,6 +88,23 @@
   (try (f) (catch Exception _ [])))
 
 ;; =============================================================================
+;; Live Update Broadcasting
+;; =============================================================================
+
+(defn broadcast-calendar-update!
+  "Broadcast updated day cells to all connected SSE clients.
+   
+   Called after any mutation that affects the calendar (create request,
+   resolve booking, cancel booking). Queries current state and broadcasts
+   the affected date range."
+  [node start end]
+  (let [bookings (safe-query #(b/all-bookings node))
+        requests (safe-query #(b/pending-requests node))
+        day-cells (cal/day-cells-for-range start end bookings requests)
+        html (apply str (map views/render day-cells))]
+    (sse/broadcast! html)))
+
+;; =============================================================================
 ;; Handlers
 ;; =============================================================================
 
@@ -127,12 +134,7 @@
       (if-let [{:keys [start-date end-date]} (b/get-booking node id)]
         (do
           (b/cancel-booking! node id)
-          ;; Broadcast updated day cells
-          (let [bookings (safe-query #(b/all-bookings node))
-                requests (safe-query #(b/pending-requests node))
-                day-cells (cal/day-cells-for-range start-date end-date bookings requests)
-                html (apply str (map views/render day-cells))]
-            (broadcast! html))
+          (broadcast-calendar-update! node start-date end-date)
           (resp/status 204))
         (resp/not-found "Booking not found")))))
 
@@ -166,34 +168,30 @@
           bookings (safe-query #(b/all-bookings node))
           requests (safe-query #(b/pending-requests node))
           html (views/render (cal/month-fragment month bookings requests))
-          message (format-datastar-fragment html)]
+          message (sse/format-datastar-fragment html)]
       (http-kit/as-channel req
-        {:on-open (fn [channel]
-                    ;; Send initial headers + fragment, then close
-                    (http-kit/send! channel
-                      {:headers {"Content-Type" "text/event-stream"
-                                 "Cache-Control" "no-cache"}
-                       :body message}
-                      true))}))))  ; true = close after send
+                           {:on-open (fn [channel]
+                                       ;; Send initial headers + fragment, then close
+                                       (http-kit/send! channel
+                                                       {:headers {"Content-Type" "text/event-stream"
+                                                                  "Cache-Control" "no-cache"}
+                                                        :body message}
+                                                       true))}))))  ; true = close after send
 
 (defn calendar-events [_node]
-  (fn [req]
-    (http-kit/as-channel req
-      {:on-open  (fn [channel]
-                   (register-sse-channel! channel)
-                   ;; Send initial SSE headers + connected message
-                   (http-kit/send! channel
-                     {:headers {"Content-Type" "text/event-stream"
-                                "Cache-Control" "no-cache"}}
-                     false)  ; false = keep open
-                   ;; Send connected script
-                   (let [connected-msg (str "event: datastar-patch-elements\n"
-                                            "data: mode append\n"
-                                            "data: selector body\n"
-                                            "data: elements <script data-effect=\"el.remove()\">console.log('SSE connected')</script>\n\n")]
-                     (send-sse! channel connected-msg)))
-       :on-close (fn [channel _status]
-                   (unregister-sse-channel! channel))})))
+  (sse/sse-handler
+   {:on-connect (fn [channel]
+                  ;; Send SSE headers and connection confirmation
+                  (http-kit/send! channel
+                                  {:headers {"Content-Type" "text/event-stream"
+                                             "Cache-Control" "no-cache"}}
+                                  false)
+                  ;; Self-removing script confirms connection in browser console
+                  (sse/send! channel
+                             (str "event: datastar-patch-elements\n"
+                                  "data: mode append\n"
+                                  "data: selector body\n"
+                                  "data: elements <script data-effect=\"el.remove()\">console.log('SSE connected')</script>\n\n")))}))
 
 ;; -----------------------------------------------------------------------------
 ;; POST Handlers
@@ -225,13 +223,8 @@
             (let [request-id (b/create-request! node {:tenant-name tenant-name
                                                       :start-date  start
                                                       :end-date    end
-                                                      :priority    (or priority 0)})
-                  ;; Broadcast updated day cells to all connected clients
-                  bookings (safe-query #(b/all-bookings node))
-                  requests (safe-query #(b/pending-requests node))
-                  day-cells (cal/day-cells-for-range start end bookings requests)
-                  html (apply str (map views/render day-cells))]
-              (broadcast! html)
+                                                      :priority    (or priority 0)})]
+              (broadcast-calendar-update! node start end)
               (-> (json-response {:request-id (str request-id)})
                   (resp/status 201)))))
         (error-response 400 "Invalid JSON body")))))
@@ -257,13 +250,8 @@
             (let [conflicts (safe-query #(b/find-conflicting-requests node start end))]
               (if (empty? conflicts)
                 (error-response 404 "No pending requests found for this slot")
-                (let [result (b/resolve-slot! node conflicts decider-fn)
-                      ;; Broadcast updated day cells
-                      bookings (safe-query #(b/all-bookings node))
-                      requests (safe-query #(b/pending-requests node))
-                      day-cells (cal/day-cells-for-range start end bookings requests)
-                      html (apply str (map views/render day-cells))]
-                  (broadcast! html)
+                (let [result (b/resolve-slot! node conflicts decider-fn)]
+                  (broadcast-calendar-update! node start end)
                   (json-response {:booking-id (str (:booking-id result))
                                   :winner     (str (:winner result))
                                   :rejected   (mapv str (:rejected result))}))))))
