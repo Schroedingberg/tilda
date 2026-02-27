@@ -87,7 +87,7 @@
         node        (if xtdb-cfg
                       (xtn/start-node xtdb-cfg)
                       (xtn/start-node))
-        handler     (routes/handler node)
+        handler     (routes/handler node config)
         server      (http-kit/run-server handler {:port port})]
     (reset! state {:node node :server server :publisher publisher :config config})
     (mu/log ::started :port port :storage (or storage-dir "in-memory"))

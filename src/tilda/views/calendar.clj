@@ -111,15 +111,15 @@
 
 (defn day-indicator
   "Small colored dot for a booking/request.
-   Pending requests include request-id for deletion."
+   Pending requests use dashed border with tenant color."
   [{:keys [xt/id tenant-name]} booked?]
   (if booked?
     [:div.indicator.booked {:style (str "background:" (tenant-color tenant-name))
                             :title tenant-name}]
     [:div.indicator.pending {:data-request-id (str id)
                              :data-request-tenant tenant-name
-                             :style (str "background:" (tenant-color tenant-name))
-                             :title (str tenant-name " (click to cancel)")}]))
+                             :style (str "color:" (tenant-color tenant-name))
+                             :title (str tenant-name " (pending - drag to cancel)")}]))
 
 (defn day-cell
   "Single day in calendar grid."
@@ -208,22 +208,55 @@
        (month-section m bookings requests))
      (load-sentinel next-month)]))
 
+(defn- page-header
+  "Page header with resource name and tenant info."
+  [tenant-name resource-name]
+  [:header {:style "margin-bottom: 1.5rem;"}
+   [:hgroup
+    [:h1 (or resource-name "Booking Calendar")]
+    [:p "Drag to select dates for your booking request"]]
+   [:small {:style "display: inline-flex; align-items: center; gap: 0.5rem;"}
+    [:span {:style (str "width: 12px; height: 12px; border-radius: 50%; background:" (tenant-color tenant-name))}]
+    (str "Booking as " tenant-name)]])
+
+(defn- legend
+  "Legend explaining calendar indicators."
+  []
+  [:div.legend
+   [:div.legend-item
+    [:span.legend-dot.booked]
+    [:span "Confirmed"]]
+   [:div.legend-item
+    [:span.legend-dot.pending]
+    [:span "Pending"]]
+   [:div.legend-item
+    [:span.legend-dot.today]
+    [:span "Today"]]])
+
 (defn calendar-page
   "Full calendar page with layout."
-  [^YearMonth start-month tenant-name bookings requests]
-  [:html
-   [:head
-    [:meta {:charset "utf-8"}]
-    [:meta {:name "viewport" :content "width=device-width, initial-scale=1"}]
-    [:title "Tilda - Calendar"]
-    [:script {:type "module"
-              :src "https://cdn.jsdelivr.net/gh/starfederation/datastar@1.0.0-RC.7/bundles/datastar.js"}]
-    [:link {:rel "stylesheet" :href "/css/calendar.css"}]]
-   [:body
-    [:h1 "Booking Calendar"]
-    [:p "Drag to select dates for your booking request."]
-    (calendar-container start-month tenant-name bookings requests)
-    [:script {:src "/js/calendar.js" :defer true}]]])
+  ([start-month tenant-name bookings requests]
+   (calendar-page start-month tenant-name bookings requests nil))
+  ([^YearMonth start-month tenant-name bookings requests resource-name]
+   [:html {:data-theme "light"}
+    [:head
+     [:meta {:charset "utf-8"}]
+     [:meta {:name "viewport" :content "width=device-width, initial-scale=1"}]
+     [:title "Tilda - Calendar"]
+     ;; Pico CSS - classless semantic styling
+     [:link {:rel "stylesheet"
+             :href "https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"}]
+     ;; Calendar-specific overrides
+     [:link {:rel "stylesheet" :href "/css/calendar.css"}]
+     ;; Datastar - server-driven reactivity
+     [:script {:type "module"
+               :src "https://cdn.jsdelivr.net/gh/starfederation/datastar@1.0.0-RC.7/bundles/datastar.js"}]]
+    [:body
+     [:main.container
+      (page-header tenant-name resource-name)
+      (legend)
+      (calendar-container start-month tenant-name bookings requests)]
+     [:script {:src "/js/calendar.js" :defer true}]]]))
 
 ;; =============================================================================
 ;; SSE Updates

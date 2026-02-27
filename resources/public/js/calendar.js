@@ -3,8 +3,8 @@
  * Everything else (nav, SSE updates) handled by Datastar.
  * 
  * Selection logic:
- * - If selection starts on a day with YOUR pending request → delete that request
- * - Otherwise → create new request for selected range
+ * - If selection starts on a day with YOUR pending request → delete mode (red)
+ * - Otherwise → create mode (blue) for selected range
  */
 (function() {
   const calendar = document.querySelector('[data-calendar]');
@@ -13,6 +13,7 @@
   const tenant = calendar.dataset.tenant;
   let startDay = null;
   let isDragging = false;
+  let isDeleteMode = false;
 
   // Get day element from mouse/touch event
   const getDay = (e) => {
@@ -36,14 +37,19 @@
   };
 
   const clearSelection = () => {
-    calendar.querySelectorAll('.selecting').forEach(el => el.classList.remove('selecting'));
+    calendar.querySelectorAll('.selecting').forEach(el => {
+      el.classList.remove('selecting', 'delete-mode');
+    });
   };
 
   const updateSelection = (endDay) => {
     clearSelection();
     if (startDay && endDay) {
       daysBetween(startDay.dataset.day, endDay.dataset.day)
-        .forEach(el => el.classList.add('selecting'));
+        .forEach(el => {
+          el.classList.add('selecting');
+          if (isDeleteMode) el.classList.add('delete-mode');
+        });
     }
   };
 
@@ -69,6 +75,8 @@
     if (day && !day.classList.contains('past')) {
       startDay = day;
       isDragging = true;
+      // Check if we're starting on our own pending request
+      isDeleteMode = !!getOwnPendingRequest(day);
       updateSelection(day);
       e.preventDefault();
     }
@@ -85,11 +93,12 @@
     const endDay = getDay(e) ?? [...calendar.querySelectorAll('.selecting')].pop();
     
     if (startDay && endDay) {
-      // Check if selection starts on a day with our pending request
-      const ownRequest = getOwnPendingRequest(startDay);
-      if (ownRequest) {
+      if (isDeleteMode) {
         // Delete mode: cancel the existing request
-        deleteRequest(ownRequest.dataset.requestId);
+        const ownRequest = getOwnPendingRequest(startDay);
+        if (ownRequest) {
+          deleteRequest(ownRequest.dataset.requestId);
+        }
       } else {
         // Create mode: new request for selected range
         createRequest(startDay.dataset.day, endDay.dataset.day);
@@ -99,6 +108,7 @@
     clearSelection();
     startDay = null;
     isDragging = false;
+    isDeleteMode = false;
   };
 
   // Mouse events

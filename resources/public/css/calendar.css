@@ -1,145 +1,267 @@
 /**
- * Tilda Calendar Styles
+ * Tilda Calendar - Pico CSS overrides
  * 
- * CSS for the continuous-scroll calendar view. Used with the calendar 
- * components in tilda.views.calendar namespace.
- * 
- * Structure:
- * - .calendar: Main container (max-width 900px centered)
- * - .month-section: Each month block with sticky header
- * - .calendar-grid: 7-column grid for days
- * - .day: Individual day cells with state variants
- * - .indicator: Small colored dots for bookings/requests
- * - .load-sentinel: Lazy load trigger zone
- * 
- * Day States:
- * - .past: Grayed out non-interactive
- * - .today: Blue border highlight
- * - .empty: Invisible padding cells
- * - .selecting: Active selection with pulse animation
- * 
- * Indicator Types:
- * - .booked: Full opacity (confirmed booking)
- * - .pending: 50% opacity (pending request)
+ * Base styling provided by Pico CSS (via CDN in layout).
+ * This file only contains calendar-specific styles.
  */
 
-/* Main container */
+/* ==========================================================================
+   Calendar Grid (Pico doesn't provide grid layouts)
+   ========================================================================== */
+
 .calendar {
   user-select: none;
-  max-width: 900px;
-  margin: 0 auto;
 }
 
-/* Month sections */
-.month-section {
-  margin-bottom: 2rem;
-}
-
-.month-header {
-  font-size: 1.5rem;
-  font-weight: bold;
-  padding: 1rem 0;
-  position: sticky;
-  top: 0;
-  background: white;
-  z-index: 10;
-  border-bottom: 2px solid #e5e7eb;
-}
-
-/* Calendar grid layout */
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 2px;
+  gap: 1px;
+  background: var(--pico-muted-border-color);
 }
 
 .calendar-header {
   padding: 0.5rem;
   text-align: center;
-  font-weight: bold;
-  background: #f3f4f6;
+  font-weight: 500;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: var(--pico-card-background-color);
+  color: var(--pico-muted-color);
 }
 
-/* Day cells */
+/* ==========================================================================
+   Month Cards
+   ========================================================================== */
+
+.month-section {
+  margin-bottom: 1.5rem;
+  border-radius: var(--pico-border-radius);
+  overflow: hidden;
+  box-shadow: var(--pico-card-box-shadow);
+}
+
+.month-header {
+  font-size: 1.125rem;
+  font-weight: 600;
+  padding: 1rem 1.25rem;
+  position: sticky;
+  top: 0;
+  background: var(--pico-card-background-color);
+  border-bottom: 1px solid var(--pico-muted-border-color);
+  z-index: 10;
+}
+
+/* ==========================================================================
+   Day Cells
+   ========================================================================== */
+
 .day {
-  min-height: 60px;
+  min-height: 72px;
   padding: 0.5rem;
-  border: 1px solid #e5e7eb;
+  background: var(--pico-card-background-color);
   cursor: pointer;
   position: relative;
-  transition: all 0.15s;
+  transition: background 0.15s;
 }
 
 .day:hover {
-  background: #f0f9ff;
+  background: var(--pico-secondary-focus);
 }
 
 .day.past {
-  background: #f9fafb;
-  color: #9ca3af;
+  background: var(--pico-muted-border-color);
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
+.day.past:hover {
+  background: var(--pico-muted-border-color);
+}
+
 .day.today {
-  border: 2px solid #3b82f6;
+  background: color-mix(in srgb, var(--pico-primary) 10%, transparent);
+}
+
+.day.today .day-num {
+  background: var(--pico-primary);
+  color: var(--pico-primary-inverse);
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
 }
 
 .day.empty {
-  border: none;
-  background: transparent;
+  background: var(--pico-muted-border-color);
   cursor: default;
+}
+
+.day.empty:hover {
+  background: var(--pico-muted-border-color);
 }
 
 .day-num {
   font-size: 0.875rem;
+  font-weight: 500;
 }
 
-/* Booking/request indicators */
+/* ==========================================================================
+   Indicators (booking/request dots)
+   ========================================================================== */
+
 .day-indicators {
   display: flex;
   flex-wrap: wrap;
-  gap: 2px;
-  margin-top: 4px;
+  gap: 4px;
+  margin-top: 6px;
 }
 
 .indicator {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+
+.indicator:hover {
+  transform: scale(1.3);
 }
 
 .indicator.booked {
-  opacity: 1;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
 }
 
 .indicator.pending {
-  opacity: 0.5;
+  opacity: 0.65;
+  border: 2px dashed currentColor;
+  background: transparent !important;
 }
 
-/* Selection state */
+/* ==========================================================================
+   Selection States
+   ========================================================================== */
+
 .selecting {
-  background: #3b82f6 !important;
-  color: white;
-  animation: pulse 1.2s ease-in-out infinite;
+  background: var(--pico-primary) !important;
+  color: var(--pico-primary-inverse);
+  animation: pulse 1s ease-in-out infinite;
 }
 
 .selecting .day-num {
-  color: white;
+  color: var(--pico-primary-inverse);
+  background: transparent;
+}
+
+.selecting .indicator {
+  opacity: 0.7;
+}
+
+.selecting.delete-mode {
+  background: var(--pico-del-color, #c62828) !important;
 }
 
 @keyframes pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
-  50% { box-shadow: 0 0 0 4px rgba(59, 130, 246, 0); }
+  0%, 100% { box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.3); }
+  50% { box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.6); }
 }
 
-/* Lazy load sentinel */
+/* ==========================================================================
+   Legend
+   ========================================================================== */
+
+.legend {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--pico-muted-color);
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.legend-dot.booked {
+  background: var(--pico-muted-color);
+}
+
+.legend-dot.pending {
+  border: 2px dashed var(--pico-muted-color);
+}
+
+.legend-dot.today {
+  background: var(--pico-primary);
+}
+
+/* ==========================================================================
+   Load Sentinel
+   ========================================================================== */
+
 .load-sentinel {
-  height: 100px;
+  height: 80px;
   display: flex;
   align-items: center;
   justify-content: center;
+  color: var(--pico-muted-color);
+  font-size: 0.875rem;
 }
 
 .loading-spinner {
-  color: #6b7280;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.loading-spinner::before {
+  content: '';
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--pico-muted-border-color);
+  border-top-color: var(--pico-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 640px) {
+  .day {
+    min-height: 56px;
+    padding: 0.375rem;
+  }
+  
+  .day-num {
+    font-size: 0.8rem;
+  }
+  
+  .indicator {
+    width: 8px;
+    height: 8px;
+  }
+  
+  .legend {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    font-size: 0.8rem;
+  }
 }

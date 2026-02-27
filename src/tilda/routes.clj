@@ -160,13 +160,14 @@
     (if s (YearMonth/parse s) (YearMonth/now))
     (catch Exception _ (YearMonth/now))))
 
-(defn calendar-page [node]
+(defn calendar-page [node config]
   (fn [req]
     (let [month (parse-month (get-in req [:params :month]))
           tenant (get-in req [:params :tenant] "demo-user")
+          resource-name (get-in config [:resource :name])
           bookings (safe-query #(b/all-bookings node))
           requests (safe-query #(b/pending-requests node))]
-      (html-response (cal/calendar-page month tenant bookings requests)))))
+      (html-response (cal/calendar-page month tenant bookings requests resource-name)))))
 
 (defn month-fragment [node]
   (fn [req]
@@ -279,12 +280,12 @@
 ;; Router
 ;; =============================================================================
 
-(defn router [node]
+(defn router [node config]
   (ring/router
    [["/" {:get (home node)}]
 
     ["/calendar"
-     ["" {:get (calendar-page node)}]
+     ["" {:get (calendar-page node config)}]
      ["/month/:month" {:get (month-fragment node)}]
      ["/events" {:get (calendar-events node)}]]
 
@@ -325,12 +326,15 @@
               :ms     ms)
       resp)))
 
-(defn handler [node]
-  (-> (ring/ring-handler
-       (router node)
-       (ring/routes
-        serve-static
-        (ring/create-default-handler)))
-      wrap-keyword-params
-      wrap-params
-      wrap-log))
+(defn handler
+  "Create Ring handler with XTDB node and optional config."
+  ([node] (handler node {}))
+  ([node config]
+   (-> (ring/ring-handler
+        (router node config)
+        (ring/routes
+         serve-static
+         (ring/create-default-handler)))
+       wrap-keyword-params
+       wrap-params
+       wrap-log)))
