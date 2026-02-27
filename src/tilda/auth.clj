@@ -9,7 +9,8 @@
            :users {\"alice-xK9mP2\" {:name \"Alice\" :email \"alice@example.com\"}
                    \"bob-qR7nL4\"   {:name \"Bob\"   :email \"bob@example.com\"}}}}
    
-   Magic links: share /u/alice-xK9mP2 → sets cookie → calendar access")
+   Magic links: share /u/alice-xK9mP2 → sets cookie → calendar access"
+  (:require [clojure.string :as str]))
 
 ;; =============================================================================
 ;; Auth Strategies
@@ -34,7 +35,7 @@
   (when-let [email (get-in request [:headers "cf-access-authenticated-user-email"])]
     {:id    (java.util.UUID/nameUUIDFromBytes (.getBytes email))
      :email email
-     :name  (first (clojure.string/split email #"@"))
+     :name  (first (str/split email #"@"))
      :roles #{:user}}))
 
 (defmethod extract-user :magic-link
@@ -74,7 +75,7 @@
 
         ;; Magic link login - set cookie and redirect
         (and (= strategy :magic-link)
-             (clojure.string/starts-with? path "/u/"))
+             (str/starts-with? path "/u/"))
         (let [token (subs path 3)]
           (if (extract-user (assoc config :strategy strategy)
                             (assoc-in request [:path-params :token] token))
