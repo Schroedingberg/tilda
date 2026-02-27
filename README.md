@@ -110,10 +110,29 @@ curl -X DELETE localhost:8080/bookings/{id}
 - [x] Cross-month drag selection
 - [x] Sticky headers (page title + weekday labels)
 - [x] Subtle month indicators on 1st of each month
+- [x] Swappable auth (dev / Cloudflare Access / magic links)
+
+## Authentication
+
+Configured in `config.edn` via `:auth`:
+
+```edn
+;; Development (default) - no auth, stub user
+{:auth {:strategy :dev}}
+
+;; Cloudflare Access - magic link email auth handled externally
+{:auth {:strategy :cloudflare}}
+
+;; Magic links - personal URLs, zero friction for users
+{:auth {:strategy :magic-link
+        :users {"alice-xK9mP2" {:name "Alice" :email "alice@example.com"}
+                "bob-qR7nL4"   {:name "Bob"   :email "bob@example.com"}}}}
+```
+
+Magic link users bookmark `https://car.example.com/u/alice-xK9mP2` - cookie persists 1 year.
 
 ## Not Yet Implemented
 
-- [ ] Auth (stub in `auth.clj`, ready for Oak integration)
 - [ ] Admin UI for resolving conflicts (API works, no UI)
 - [ ] Request extension (drag to extend existing request)
 - [ ] Deployment: Dockerfile for container builds
@@ -124,14 +143,14 @@ curl -X DELETE localhost:8080/bookings/{id}
 
 | File | Lines | Functions |
 |------|-------|-----------|
-| booking.clj | 173 | 16 |
-| routes.clj | 340 | 25 |
+| routes.clj | 346 | 25 |
 | views/calendar.clj | 280 | 23 |
 | sse.clj | 191 | 9 |
+| booking.clj | 173 | 16 |
 | core.clj | 115 | 7 |
+| auth.clj | 96 | 5 |
 | views/layout.clj | 87 | 5 |
-| auth.clj | 57 | 2 |
-| **Total** | **1243** | **87** |
+| **Total** | **1288** | **90** |
 
 ## Architecture Decisions
 
