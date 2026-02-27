@@ -23,5 +23,6 @@ target/
 Thumbs.db
 
 # XTDB data (if persisted locally)
+data/
 xtdb-data/
 .xtdb/

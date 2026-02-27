@@ -1,0 +1,12 @@
+;; Tilda Configuration
+;; 
+;; For development: leave :storage-dir commented out (uses in-memory XTDB)
+;; For production: uncomment and set a path for persistent storage
+
+{:server {:port 8080}
+
+ ;; Uncomment for persistent storage (survives restarts):
+ ;; :storage-dir "data/xtdb"
+
+ :resource {:name "Shared Car"
+            :description "VW Golf, parking spot A3"}}

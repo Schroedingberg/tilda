@@ -11,26 +11,31 @@
    ## Usage
    
    From REPL:
-   ```clojure
-   (require '[tilda.core :as app])
-   (app/start!)           ;; Start with defaults (port 8080, in-memory DB)
-   (app/start! :port 3000) ;; Start on custom port
-   (app/stop!)             ;; Stop everything
-   (app/node)              ;; Access the XTDB node
-   ```
+     (require '[tilda.core :as app])
+     (app/start!)            ; Start with config.edn settings
+     (app/start! :port 3000) ; Override port
+     (app/stop!)             ; Stop everything
+     (app/node)              ; Access the XTDB node
    
    From command line:
-   ```bash
-   clj -M -m tilda.core
-   ```
+     clj -M -m tilda.core
+   
+   ## Configuration
+   
+   Settings are read from config.edn at startup:
+   - :server {:port 8080}     ; HTTP port
+   - :storage-dir \"data/xtdb\" ; XTDB persistence (nil = in-memory)
    
    ## State Management
    
    State is held in a single atom containing:
    - :node - XTDB node instance
    - :server - http-kit stop function
-   - :publisher - mulog publisher stop function"
+   - :publisher - mulog publisher stop function
+   - :config - loaded configuration"
   (:require
+   [clojure.edn :as edn]
+   [clojure.java.io :as io]
    [com.brunobonacci.mulog :as mu]
    [org.httpkit.server :as http-kit]
    [tilda.routes :as routes]
@@ -39,23 +44,55 @@
 
 (defonce ^:private state (atom nil))
 
+;; =============================================================================
+;; Configuration
+;; =============================================================================
+
+(defn load-config
+  "Load configuration from config.edn. Returns empty map if file not found."
+  []
+  (let [f (io/file "config.edn")]
+    (if (.exists f)
+      (edn/read-string (slurp f))
+      {})))
+
+(defn- xtdb-config
+  "Build XTDB node config. If storage-dir is provided, uses persistent storage.
+   Otherwise uses in-memory (default for development)."
+  [storage-dir]
+  (when storage-dir
+    (let [dir (io/file storage-dir)]
+      (.mkdirs dir)
+      {:xtdb.log/local-directory-log {:path (io/file dir "log")}
+       :xtdb.buffer-pool/buffer-pool {:cache-path (io/file dir "buffers")}
+       :xtdb.object-store/file-system-object-store {:root-path (io/file dir "objects")}})))
+
+;; =============================================================================
+;; Lifecycle
+;; =============================================================================
+
 (defn start!
-  "Start the server. Options:
-   :port - HTTP port (default 8080)
-   :xtdb - XTDB node config (default in-memory)"
-  [& {:keys [port xtdb] :or {port 8080}}]
+  "Start the server. Reads config.edn, with optional overrides:
+   :port - HTTP port (overrides config)
+   :storage-dir - XTDB storage directory (overrides config, nil = in-memory)"
+  [& {:keys [port storage-dir]}]
   (when @state
     (throw (ex-info "Already started" {})))
 
-  (let [publisher (mu/start-publisher! {:type :console})
-        node      (if xtdb
-                    (xtn/start-node xtdb)
-                    (xtn/start-node))
-        handler   (routes/handler node)
-        server    (http-kit/run-server handler {:port port})]
-    (reset! state {:node node :server server :publisher publisher})
-    (mu/log ::started :port port)
-    (println (str "Tilda running on http://localhost:" port))
+  (let [config      (load-config)
+        port        (or port (get-in config [:server :port]) 8080)
+        storage-dir (or storage-dir (:storage-dir config))
+        xtdb-cfg    (xtdb-config storage-dir)
+        publisher   (mu/start-publisher! {:type :console})
+        node        (if xtdb-cfg
+                      (xtn/start-node xtdb-cfg)
+                      (xtn/start-node))
+        handler     (routes/handler node)
+        server      (http-kit/run-server handler {:port port})]
+    (reset! state {:node node :server server :publisher publisher :config config})
+    (mu/log ::started :port port :storage (or storage-dir "in-memory"))
+    (println (str "Tilda running on http://localhost:" port
+                  (if storage-dir (str " (storage: " storage-dir ")") " (in-memory)")))
     @state))
 
 (defn stop! []
@@ -68,6 +105,9 @@
 
 (defn node []
   (:node @state))
+
+(defn config []
+  (:config @state))
 
 (defn -main [& _args]
   (start!)

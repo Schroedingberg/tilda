@@ -124,7 +124,10 @@
 
   (booking/decide-first-come-first-serve sample-requests) ;;=> Aaron
 
-  (booking/resolve-slot! @node sample-requests booking/decide-first-come-first-serve)
+  (def one-tenant-multiple-requests
+    [{:tenant-name "Val" :requested-at (instant "2026-01-01T09:00:00Z") :priority 5 :xt/id 123}
+     {:tenant-name "Val" :requested-at (instant "2026-01-01T10:00:00Z") :priority 10 :xt/id 124}
+     {:tenant-name "Val" :requested-at (instant "2026-01-01T08:00:00Z") :priority 3 :xt/id 125}])
 
 
   (booking/all-bookings @node)
