@@ -1,0 +1,9 @@
+.git
+.github
+target
+.clj-kondo
+.lsp
+.nrepl-port
+*.log
+dev/
+test/
