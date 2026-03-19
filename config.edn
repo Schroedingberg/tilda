@@ -11,16 +11,7 @@
  :resource {:name "Shared Car"
             :description "VW Golf, parking spot A3"}
 
- ;; Dev mode - no auth required (stub user)
- ;;:auth {:strategy :dev}
-
- ;; Magic-link auth for multi-tenant testing:
- ;; :auth {:strategy :magic-link
- ;;        :users {"alice" {:name "Alice" :email "alice@example.com"}
- ;;                "bob"   {:name "Bob"   :email "bob@example.com"}
- ;;                "carol" {:name "Carol" :email "carol@example.com"}}}
-
- ;; Other auth options:
- ;; :auth {:strategy :dev}        ; stub user, no auth
- ;; :auth {:strategy :cloudflare} ; Cloudflare Access headers
- }
+ ;; Auth - in production, set TILDA_USERS env var instead:
+ ;;   fly secrets set TILDA_USERS="xK9mP2wQr3:Alice,qR7nL4yZm8:Bob"
+ ;; Dev mode (no auth):
+ :auth {:strategy :dev}}

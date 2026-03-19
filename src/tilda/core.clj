@@ -36,6 +36,7 @@
   (:require
    [clojure.edn :as edn]
    [clojure.java.io :as io]
+   [clojure.string :as str]
    [com.brunobonacci.mulog :as mu]
    [org.httpkit.server :as http-kit]
    [tilda.routes :as routes]
@@ -48,13 +49,28 @@
 ;; Configuration
 ;; =============================================================================
 
+(defn- parse-users-env
+  "Parse TILDA_USERS env var: 'token:Name,token2:Name2,...'"
+  [s]
+  (when s
+    (->> (str/split s #",")
+         (map #(str/split % #":" 2))
+         (filter #(= 2 (count %)))
+         (map (fn [[token name]] [token {:name name}]))
+         (into {}))))
+
 (defn load-config
-  "Load configuration from config.edn. Returns empty map if file not found."
+  "Load configuration from config.edn, with env var overrides.
+   TILDA_USERS env var: 'token:Name,token2:Name2' for magic-link auth."
   []
-  (let [f (io/file "config.edn")]
-    (if (.exists f)
-      (edn/read-string (slurp f))
-      {})))
+  (let [f (io/file "config.edn")
+        base (if (.exists f)
+               (edn/read-string (slurp f))
+               {})
+        users-env (System/getenv "TILDA_USERS")]
+    (if-let [users (parse-users-env users-env)]
+      (assoc base :auth {:strategy :magic-link :users users})
+      base)))
 
 (defn- xtdb-config
   "Build XTDB node config. If storage-dir is provided, uses persistent storage.
