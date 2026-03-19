@@ -2,7 +2,8 @@
   (:require
    [clojure.test :refer [deftest is use-fixtures]]
    [tilda.booking :as b]
-   [xtdb.node :as xtn])
+   [xtdb.node :as xtn]
+   [tick.core :as t])
   (:import [java.time Instant]))
 
 (def ^:dynamic *node* nil)
@@ -20,8 +21,8 @@
 ;; =============================================================================
 
 (deftest decide-first-come-first-serve-test
-  (let [requests [{:tenant-name "Val" :requested-at (instant "2026-01-01T10:00:00Z")}
-                  {:tenant-name "Flo" :requested-at (instant "2026-01-01T09:00:00Z")}]]
+  (let [requests [{:tenant-name "Val" :requested-at (t/date-time "2026-01-01T10:00:00")}
+                  {:tenant-name "Flo" :requested-at (t/date-time "2026-01-01T09:00:00")}]]
     (is (= "Flo" (:tenant-name (b/decide-first-come-first-serve requests))))))
 
 (deftest decide-by-priority-test
@@ -39,36 +40,26 @@
 ;; Date Comparison Tests (pure)
 ;; =============================================================================
 
-(deftest before-or-equal?-test
-  (let [t1 (instant "2026-03-01T00:00:00Z")
-        t2 (instant "2026-03-02T00:00:00Z")]
-    (is (b/before-or-equal? t1 t2))
-    (is (b/before-or-equal? t1 t1))
-    (is (not (b/before-or-equal? t2 t1)))))
-
-(deftest after-or-equal?-test
-  (let [t1 (instant "2026-03-01T00:00:00Z")
-        t2 (instant "2026-03-02T00:00:00Z")]
-    (is (b/after-or-equal? t2 t1))
-    (is (b/after-or-equal? t1 t1))
-    (is (not (b/after-or-equal? t1 t2)))))
 
 (deftest overlaps?-test
   ;; [1--3] overlaps [2--4]
-  (is (b/overlaps? (instant "2026-03-01T00:00:00Z") (instant "2026-03-03T00:00:00Z")
-                   (instant "2026-03-02T00:00:00Z") (instant "2026-03-04T00:00:00Z")))
+  (is (b/overlaps? (t/date-time "2026-03-01T00:00:00") (t/date-time "2026-03-03T00:00:00")
+                   (t/date-time "2026-03-02T00:00:00") (t/date-time "2026-03-04T00:00:00")))
   ;; [1--2] overlaps [2--3] (touching)
-  (is (b/overlaps? (instant "2026-03-01T00:00:00Z") (instant "2026-03-02T00:00:00Z")
-                   (instant "2026-03-02T00:00:00Z") (instant "2026-03-03T00:00:00Z")))
+  (is (b/overlaps? (t/date-time "2026-03-01T00:00:00") (t/date-time "2026-03-02T00:00:00")
+                   (t/date-time "2026-03-02T00:00:00") (t/date-time "2026-03-03T00:00:00")))
   ;; [1--2] does not overlap [3--4]
-  (is (not (b/overlaps? (instant "2026-03-01T00:00:00Z") (instant "2026-03-02T00:00:00Z")
-                        (instant "2026-03-03T00:00:00Z") (instant "2026-03-04T00:00:00Z"))))
+  (is (not (b/overlaps? (t/date-time "2026-03-01T00:00:00") (t/date-time "2026-03-02T00:00:00")
+                        (t/date-time "2026-03-03T00:00:00") (t/date-time "2026-03-04T00:00:00"))))
   ;; [3--4] does not overlap [1--2] (reverse)
-  (is (not (b/overlaps? (instant "2026-03-03T00:00:00Z") (instant "2026-03-04T00:00:00Z")
-                        (instant "2026-03-01T00:00:00Z") (instant "2026-03-02T00:00:00Z"))))
+  (is (not (b/overlaps? (t/date-time "2026-03-03T00:00:00") (t/date-time "2026-03-04T00:00:00")
+                        (t/date-time "2026-03-01T00:00:00") (t/date-time "2026-03-02T00:00:00"))))
   ;; [1--4] contains [2--3]
-  (is (b/overlaps? (instant "2026-03-01T00:00:00Z") (instant "2026-03-04T00:00:00Z")
-                   (instant "2026-03-02T00:00:00Z") (instant "2026-03-03T00:00:00Z"))))
+  (is (b/overlaps? (t/date-time "2026-03-01T00:00:00Z") (t/date-time "2026-03-04T00:00:00Z")
+                   (t/date-time "2026-03-02T00:00:00Z") (t/date-time "2026-03-03T00:00:00Z")))
+  ;; The same, but with maps
+  (is (b/overlaps? {:start-date (t/date "2026-01-01") :end-date (t/date "2026-01-10")}
+                   {:start-date (t/date "2026-01-05") :end-date (t/date "2026-01-15")})))
 
 ;; =============================================================================
 ;; Pure Logic Tests (no DB required)
@@ -77,7 +68,7 @@
 (deftest find-overlapping-request-logic-test
   (let [existing [{:xt/id #uuid "00000000-0000-0000-0000-000000000001"
                    :tenant-name "Flo"
-                   :start-date (instant "2026-03-01T00:00:00Z")
+                   :start-date (t/date-time "2026-03-01T00:00:00Z")
                    :end-date (instant "2026-03-03T00:00:00Z")}
                   {:xt/id #uuid "00000000-0000-0000-0000-000000000002"
                    :tenant-name "Val"

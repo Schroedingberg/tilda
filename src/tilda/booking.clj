@@ -30,29 +30,22 @@
    
    Pure business logic is separated into `-logic` suffixed functions
    for unit testing. DB operations delegate to these pure functions."
-  (:require [xtdb.api :as xt])
+  (:require [xtdb.api :as xt]
+            [tick.core :as t])
   (:import [java.time Instant]))
 
-;; =============================================================================
-;; Date Comparison Helpers
-;; =============================================================================
 
-(defn before-or-equal?
-  "True if a <= b for Comparable types (Instant, LocalDate, etc.)"
-  [a b]
-  (not (pos? (compare a b))))
-
-(defn after-or-equal?
-  "True if a >= b for Comparable types (Instant, LocalDate, etc.)"
-  [a b]
-  (not (neg? (compare a b))))
 
 (defn overlaps?
   "True if time range [start-a, end-a] overlaps with [start-b, end-b].
    Ranges are inclusive on both ends."
-  [start-a end-a start-b end-b]
-  (and (before-or-equal? start-a end-b)
-       (after-or-equal? end-a start-b)))
+  ([{start-a :start-date end-a :end-date} {start-b :start-date end-b :end-date}]
+   (overlaps? start-a end-a start-b end-b))
+  ([start-a end-a start-b end-b]
+   (and (t/<= start-a end-b)
+        (t/>= end-a start-b))))
+
+
 
 ;; =============================================================================
 ;; Pure Business Logic (unit-testable)
@@ -60,13 +53,31 @@
 
 (defn find-overlapping-request-logic
   "Given a list of existing requests, find one that overlaps with the time range
-   for the same tenant. Returns nil if no overlap found."
+   for the same tenant. Returns nil if no overlap found.
+   Only needed for idempotency check in create-request!"
   [existing-requests tenant-name start-date end-date]
   (first (filter (fn [req]
                    (and (= (:tenant-name req) tenant-name)
                         (overlaps? (:start-date req) (:end-date req)
                                    start-date end-date)))
                  existing-requests)))
+
+
+
+(comment
+  (let [existing-requests [{:tenant-name "Alice" :start-date (t/date "2026-01-01") :end-date (t/date "2026-01-01")}
+                           {:tenant-name "Bob" :start-date (t/date "2026-01-02") :end-date (t/date "2026-01-02")}]])
+
+
+
+  (let [a (t/date)
+        b  (t/date)]
+    (t/< a b))
+
+
+  ())
+
+
 
 (defn build-request-doc
   "Build a request document. Pure function for testing."
@@ -79,8 +90,7 @@
    :requested-at requested-at})
 
 (defn find-conflicts-logic
-  "Given a list of bookings, find those that conflict with proposed time range.
-   Pure function for testing."
+  "Given a list of bookings, find those that conflict with proposed time range."
   [bookings requested-start requested-end & {:keys [exclude-id]}]
   (let [conflicts (filter (fn [booking]
                             (overlaps? (:start-date booking) (:end-date booking)

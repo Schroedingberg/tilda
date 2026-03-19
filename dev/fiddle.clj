@@ -84,8 +84,8 @@
 
   ;; --- Resolution flow ---
   (let [requests (booking/find-conflicting-requests @node
-                   (instant "2026-03-01T00:00:00Z")
-                   (instant "2026-03-03T23:59:59Z"))]
+                                                    (instant "2026-03-01T00:00:00Z")
+                                                    (instant "2026-03-03T23:59:59Z"))]
     (booking/resolve-slot! @node requests booking/decide-first-come-first-serve))
 
   ;; --- History (XTDB time-travel) ---
@@ -95,6 +95,5 @@
   ;; --- Cleanup ---
   (stop!)
 
-  ,)
 
   ())
